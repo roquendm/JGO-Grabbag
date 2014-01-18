@@ -1,15 +1,23 @@
 package roquen.math;
 
-// http://www.java-gaming.org/topics/atan2/28986/msg/264901/view.html
-// http://www.java-gaming.org/topics/exp-log-amp-pow/24240/msg/203361/view.html
-  
+
+
+/**
+ * Some basic math routines for 32-bit floating point.
+ * <p>
+ * <list>
+ * <li>http://www.java-gaming.org/topics/atan2/28986/msg/264901/view.html</li>
+ * <li>http://www.java-gaming.org/topics/exp-log-amp-pow/24240/msg/203361/view.html</li>
+ * </list>
+ */
+
 public final class Float32 {
   
   private Float32() {}
 
-  private static final float PI        = (float)(Math.PI);
-  private static final float PI_OVER_2 = (float)(Math.PI/2);
-  private static final float PI_OVER_4 = (float)(Math.PI/4);
+  public static final float PI        = (float)(Math.PI);
+  public static final float PI_OVER_2 = (float)(Math.PI/2);
+  public static final float PI_OVER_4 = (float)(Math.PI/4);
 
   /** Return 'x' multiplied by the sign of 'y'. */
   // copySign isn't yet an intrinsic, so this isn't a desirable function to call.
@@ -234,4 +242,5 @@ public final class Float32 {
     {
       return Float.intBitsToFloat((x+127)<<23);
     }
+    
 }
