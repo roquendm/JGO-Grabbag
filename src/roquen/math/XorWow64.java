@@ -1,10 +1,10 @@
 package roquen.math;
 
 
-/** 
- * XorShift + Weyl generator with period ~2<sup>128</sup>.
+/***
+ * 64-bit XorShift generator combined with a Weyl.
  * <p>
- * Passes all of SmallCrush and Crush.
+ *  Period: 2<sup>128</sup>-2<sup>64</sup> ~= 2<sup>128</sup>
  */
 public final class XorWow64 extends PRNG64
 {
@@ -37,13 +37,13 @@ public final class XorWow64 extends PRNG64
 
   @Override
   void setSeed(long seed) {
-    data = seed;
-    weyl = 0x5db3d743;
+    data = seed | 1;
+    weyl = 0x5db3d743 ^ (seed & 1);
   }
 
   void setSeed(long data1, long data2)
   {
-    assert(data1 != 0);
+    if (data1 == 0) data1 = Long.MIN_VALUE;
     data = data1;
     weyl = data2;
   }

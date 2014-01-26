@@ -1,5 +1,13 @@
 package roquen.math;
 
+// Implementation notes:
+// Passes SmallCrush
+
+/***
+ * 32-bit XorShift generator combined with a Weyl.
+ * <p>
+ *  Period: 2<sup>64</sup>-2<sup>32</sup> ~= 2<sup>64</sup>
+ */
 public final class XorWow32 extends PRNG32 
 {
   /** state data of xorshift */

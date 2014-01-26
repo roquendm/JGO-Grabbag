@@ -5,6 +5,7 @@ package roquen.math;
  * integer data chunks.
  */
 public abstract class PRNG64 extends PRNG 
-{  
+{
+  @Override
   public final int nextInt() { return (int)(nextLong() >>> 32); }
 }

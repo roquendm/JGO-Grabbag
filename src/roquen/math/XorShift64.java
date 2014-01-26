@@ -1,10 +1,16 @@
 package roquen.math;
 
 
-/*
+/* Implementation notes:
  * SmallCrush failure: [13,7,17]
  *   8  MatrixRank eps
- * Adding weyl makes it pass all SmallCrush & Crush.
+ */
+
+/***
+ * Basic XorShift (64-bit) generator.
+ * <p>
+ * Period: 2<sup>64</sup>-1,
+ * <p>
  */
 
 public final class XorShift64 extends PRNG64
@@ -22,6 +28,7 @@ public final class XorShift64 extends PRNG64
 
   @Override
   void setSeed(long seed) {
+    if (seed == 0) seed = Long.MIN_VALUE;
     data = seed;
   }
 

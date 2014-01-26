@@ -2,7 +2,12 @@ package roquen.math;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-
+/**
+ * Base class
+ * <p>
+ * All ranges are shown in American notation: square bracket
+ * is inclusive and parentheses is exclusive.
+ */
 public abstract class PRNG {
   /** Sets the current state data of the generator. */
   abstract void setSeed(long seed);
@@ -24,7 +29,7 @@ public abstract class PRNG {
   // two non-seeded generators in a row within the same
   // nanosecond and it matters.  You never know. (Seriously,
   // why not...doesn't cost you anything)
-  protected static AtomicLong mix = new AtomicLong();
+  protected static AtomicLong mix = new AtomicLong(-1);
   
   //***************************************
   //** Derived stuff all below this point
