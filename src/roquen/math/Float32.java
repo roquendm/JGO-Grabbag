@@ -1,7 +1,5 @@
 package roquen.math;
 
-
-
 /**
  * Some basic math routines for 32-bit floating point.
  * <p>

@@ -1,5 +1,8 @@
 package roquen.math.lds;
 
+/**
+ * 
+ */
 public final class Sobol3D
 {
   // state data for the sequence
@@ -42,7 +45,7 @@ public final class Sobol3D
   /** */
   public Sobol3D() { d0=d1=d2=i=0; }
   
-  /** */
+  /** Sets seed values for the three dimensions and resets the stream. */
   public final void seed(int s0, int s1, int s2)
   {
     d0 = s0;
@@ -66,7 +69,7 @@ public final class Sobol3D
     i  += 1;
   }
   
-  /** */
+  /** Move 'num' positions forward or backward in the stream. */
   public final void seek(int num)
   {
     int n = i + num;
@@ -91,7 +94,7 @@ public final class Sobol3D
   }
 
   
-  /** */
+  /** Sets the three elements of 'v' starting of 'off' to the next value. */
   public final void next(float[] v, int off)
   {
     v[off++] = (d0 >>> 8) * 0x1p-24f;
@@ -101,9 +104,10 @@ public final class Sobol3D
     updateState();
   }
   
-  /** */
+  /** Sets the first three elements of 'v' to the next value. */
   public final void next(float[] v) { next(v,0); }
   
+  /** Puts the next value (three elements) into 'fb' */
   public final void next(java.nio.FloatBuffer fb)
   {
     fb.put((d0 >>> 8) * 0x1p-24f);
