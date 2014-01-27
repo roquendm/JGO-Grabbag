@@ -75,6 +75,9 @@ public final class XorWow32 extends PRNG32
     data ^= (data <<   5);
     weyl += WEYL;
     
+    // NOTE: Other mixes are possible, such as an xor
+    // instead of addition.  Some authors would suggest
+    // replacing 'OP weyl' with 'OP (weyl ^ (weyl>>>16))'.
     return data + weyl;
   }
 }

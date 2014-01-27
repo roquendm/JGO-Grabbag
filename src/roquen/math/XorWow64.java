@@ -5,12 +5,19 @@ package roquen.math;
  * 64-bit XorShift generator combined with a Weyl.
  * <p>
  *  Period: 2<sup>128</sup>-2<sup>64</sup> ~= 2<sup>128</sup>
+ * <p>
+ * This generator requires 128 bits of state data.  So one
+ * cannot retrieve and restore complete state via {@link #getSeed()}.
+ * The second half of the state needs to be retrieved via {@link #getSeed2()}
+ * and use {@link #setSeed(long, long)} to reset the stream to a given
+ * position.
  */
 public final class XorWow64 extends PRNG64
 {
   private long data;
   private long weyl;
   
+  /** Same constant as XorWow32, just scaled to 64-bits */
   private static final long WEYL = 0x61C8864680b583EBL;
   
   public XorWow64()
