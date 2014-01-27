@@ -1,5 +1,8 @@
-package roquen.math;
+package roquen.math.rng;
 
+/**
+ * 
+ */
 public class BidirectionalLCG extends PRNG32 {
   
   /** state data */

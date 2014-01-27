@@ -1,4 +1,4 @@
-package roquen.math;
+package roquen.math.rng;
 
 /**
  * Basic class of random number generators that operate on 32-bit

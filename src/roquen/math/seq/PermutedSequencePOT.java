@@ -8,7 +8,7 @@ package roquen.math.seq;
  */
 public class PermutedSequencePOT 
 {
-  private static roquen.math.XorShift32 rng = new roquen.math.XorShift32();
+  private static roquen.math.rng.XorShift32 rng = new roquen.math.rng.XorShift32();
   
   private int m;
   private int a;

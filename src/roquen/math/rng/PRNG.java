@@ -1,4 +1,4 @@
-package roquen.math;
+package roquen.math.rng;
 
 import java.util.concurrent.atomic.AtomicLong;
 

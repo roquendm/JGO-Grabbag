@@ -1,4 +1,4 @@
-package roquen.math;
+package roquen.math.rng;
 
 /***
  * Basic power-of-two 64-bit LCG.

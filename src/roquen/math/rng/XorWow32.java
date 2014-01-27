@@ -1,4 +1,4 @@
-package roquen.math;
+package roquen.math.rng;
 
 // Implementation notes:
 // Passes SmallCrush
