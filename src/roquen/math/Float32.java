@@ -76,6 +76,9 @@ public final class Float32 {
       return Math.copySign(r, x);
     }
   
+    // NOTE: simply comment out higher order terms
+    // in exp2 to use a lower quality/faster approximation
+    
     // 3rd order: 14 good bits
     /**
     private static final float EXP2_0 = 0xf.ff8fcp-4f;
@@ -153,7 +156,7 @@ public final class Float32 {
     }
     
     
-    // change to pre-calculated correctly round hex constant
+    // TODO: change to pre-calculated correctly round hex constant
     private static final float oneOverLog2 = (float)(1.0/Math.log(2));
     
     /**
@@ -176,7 +179,6 @@ public final class Float32 {
     /**
      * Calculates: x<sup>n</sup>
      */
-    
     public static final float pow(float x, int n)
     {
       float r = 1.f;
@@ -203,10 +205,8 @@ public final class Float32 {
       } while(true);
     }
     
-    // hastings style
+    // Hastings style
     private static final float sqrtOf2f = (float)Math.sqrt(2);
-    
-
     
     // TODO: change to precalculated exact constant
     private static final float logOf2 = (float)Math.log(2);
@@ -241,4 +241,25 @@ public final class Float32 {
       return Float.intBitsToFloat((x+127)<<23);
     }
     
+    /**
+     * Calculates: 2<sup>x</sup> for inputs on [0, 30].
+     * <p>
+     * The result is exact for valid input values,
+     * otherwise the result is undefined.
+     */
+    public static final float exp2ps(int x)
+    {
+      return (float)(1<<x);
+    }
+    
+    /**
+     * Calculates: 2<sup>x</sup> for inputs on [-30, 0].
+     * <p>
+     * The result is exact for valid input values,
+     * otherwise the result is undefined.
+     */
+    public static final float exp2ns(int x)
+    {
+      return 0x1.p-30f * (1<<(30+x));
+    }  
 }
