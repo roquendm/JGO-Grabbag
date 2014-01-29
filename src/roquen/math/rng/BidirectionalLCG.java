@@ -1,7 +1,8 @@
 package roquen.math.rng;
 
 /**
- * 
+ * A 32-bit power-of-two LCG generator which can move both directions in the 
+ * sequence.
  */
 public class BidirectionalLCG extends PRNG32 {
   
@@ -24,14 +25,11 @@ public class BidirectionalLCG extends PRNG32 {
     0xac549d55, 0xfe4677fd,
     0x01c8e815, 0x608fa73d,
     0x01ed0675, 0xd5c019dd,
-    
-    // This one is not as good as the others, but
-    // don't worry about it. I promise.
     0x41c64e6d, 0xeeb9eb65,  
   };
   
   protected static final int mask  = (mult.length>>1)-1;
-  protected static final int shift = Integer.bitCount(mask);
+  protected static final int shift = 32-Integer.numberOfLeadingZeros(mask);
   
   /**
    * Number of multipliers in the set.
