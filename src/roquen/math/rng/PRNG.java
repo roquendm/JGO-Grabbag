@@ -157,15 +157,27 @@ public abstract class PRNG {
 
   
   /**
-   * Returns a 'n' bit random number, [0, 2<sup>n</sup>)
+   * Returns a 'n' bit random number, [0, 2<sup>n</sup>), with
+   * n on [1,32]
    */
   public final int nextBits(int n)
   {
     return nextInt() >>> (32-n);
   }
+  
+  
+  /**
+   * Returns a 'n' bit random number, [0, 2<sup>n</sup>), with
+   * n on [1,64]
+   */
+  public final long nextLongBits(int n)
+  {
+    return nextLong() >>> (64-n);
+  }
 
   /**
-   * Returns a 'n' bit random number, [2<sup>n/2</sup>, 2<sup>n/2</sup>)
+   * Returns a 'n' bit random number, [2<sup>n/2</sup>, 2<sup>n/2</sup>),
+   * with n on [1,32].
    */
   public final int nextSignedBits(int n)
   {
@@ -188,19 +200,35 @@ public abstract class PRNG {
   }
 
   /**
-   * Returns a random number on [0, 0xFFFF] with a
+   * Returns a random number on [0, 1) with a
    * triangular distribution.
    */
   public final float nextFloatTriangle()
   {
-    int r0,r1;
+    long r0,r1;
     
-    r1 = nextInt();
-    r0 = r1 >>> 8;          // 24-bit
+    r1 = nextLong();
+    r0 = r1 >>> 40;         // 24-bit
     r1 = r1 & 0xFFFFFF;     // 24-bit
     
-    return (r0+r1+1)>>1;
+    return (r0+r1) * 0x1p-25f;
   }
 
-  
+  /**
+   * Returns a random integer with a Poisson distribution. The
+   * input 'eMean' is exp(-mean).
+   * <p>
+   * Implementation is suitable for small means.
+   */
+  public final int nextPoisson(float eMean)
+  {
+    int   r = 1;
+    float t = nextFloat();
+
+    while (t > eMean) {
+      r++;
+      t *= nextFloat();
+    }
+    return r-1;
+  }  
 }
