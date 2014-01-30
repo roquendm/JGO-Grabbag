@@ -247,6 +247,9 @@ public abstract class PRNG {
   
   /**
    * Geometric distribution with p = 1/2.  Result on [0,64]
+   * <p>
+   * Very limited usefulness.  A result of 33 has a probability
+   * of ~1x10<sup>-10</sup>.
    * @see #nextToss()
    */
   public final int nextLongToss()
