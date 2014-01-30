@@ -230,5 +230,28 @@ public abstract class PRNG {
       t *= nextFloat();
     }
     return r-1;
-  }  
+  }
+  
+  /**
+   * Geometric distribution with p = 1/2.
+   * <p>
+   * Returns a random integer on [0,32] with probability of (1/2)<sup>n+1</sup>.
+   * <p>
+   * Number of times I toss a coin until I see a "heads" (minus one).  So we get
+   * 0,1,2...(50%, 25%, 12.5%...)
+   */
+  public final int nextToss()
+  {
+    return Integer.numberOfLeadingZeros(nextInt());
+  }
+  
+  /**
+   * Geometric distribution with p = 1/2.  Result on [0,64]
+   * @see #nextToss()
+   */
+  public final int nextLongToss()
+  {
+    return Long.numberOfLeadingZeros(nextLong());
+  }
+  
 }
