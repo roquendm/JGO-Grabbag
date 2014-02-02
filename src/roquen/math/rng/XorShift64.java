@@ -17,6 +17,16 @@ public final class XorShift64 extends PRNG64
 {
   private long data;
   
+  public XorShift64()
+  {
+    setSeed((mix.getAndDecrement() ^ System.nanoTime()));
+  }
+
+  public XorShift64(long seed)
+  {
+    setSeed(seed);
+  } 
+  
   @Override
   public final long nextLong()
   {
