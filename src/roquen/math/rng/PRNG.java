@@ -115,8 +115,6 @@ public abstract class PRNG {
     return (int)r;
   }
 
-
-
   /** 
    * Returns a uniform float on [0, 1) = [0, 1-ulp(1)]
    * <p>
@@ -249,7 +247,7 @@ public abstract class PRNG {
    * Geometric distribution with p = 1/2.  Result on [0,64]
    * <p>
    * Very limited usefulness.  A result of 33 has a probability
-   * of ~1x10<sup>-10</sup>.
+   * of 2<sup>-34</sup> ~= 1x10<sup>-10</sup>.
    * @see #nextToss()
    */
   public final int nextLongToss()

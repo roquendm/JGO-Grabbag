@@ -249,7 +249,7 @@ public final class Float32 {
      */
     public static final float exp2ps(int x)
     {
-      return (float)(1<<x);
+      return 1<<x;
     }
     
     /**
@@ -261,5 +261,5 @@ public final class Float32 {
     public static final float exp2ns(int x)
     {
       return 0x1.p-30f * (1<<(30+x));
-    }  
+    }
 }
