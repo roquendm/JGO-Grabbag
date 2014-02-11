@@ -9,9 +9,9 @@ package roquen.math;
  * </list>
  */
 
-public final class Float32 {
+public enum Float32 {
   
-  private Float32() {}
+  ;
 
   public static final float PI        = (float)(Math.PI);
   public static final float PI_OVER_2 = (float)(Math.PI/2);

@@ -4,8 +4,9 @@ package roquen.math;
 // NOTES: Includes some uber basics for those not familiar with their bit-twiddling.
 // These will all be small and are highly likely to be inlined
 
-public final class Int32 {
-  private Int32() {}
+public enum Int32 {
+  
+  ;
   
   // HotSpot has popcount as an intrinsic, but we need a way
   // to test for hardware support...sigh.
