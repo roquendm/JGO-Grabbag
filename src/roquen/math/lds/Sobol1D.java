@@ -53,7 +53,7 @@ public final class Sobol1D
     i  = 0;
   }
   
-  /** Sets the two elements of 'v' starting of 'off' to the next value. */
+  /**  */
   public final float next()
   {
     float r = (d0 >>> 8) * 0x1p-24f;
