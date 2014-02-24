@@ -3,7 +3,7 @@ package roquen.math.lds;
 /**
  * 
  */
-public final class Sobol1D
+public final class Sobol1D extends LDS
 {
   // state data
   private int i,d0;
@@ -39,7 +39,7 @@ public final class Sobol1D
     i = n;    
   }
   
-  public Sobol1D() { seed(0); }
+  public Sobol1D() { seed((int)(mix.getAndDecrement() ^ System.nanoTime())); }
   
   public Sobol1D(int seed)
   {
@@ -53,7 +53,7 @@ public final class Sobol1D
     i  = 0;
   }
   
-  /**  */
+  /** Returns the next value in the sequence. */
   public final float next()
   {
     float r = (d0 >>> 8) * 0x1p-24f;

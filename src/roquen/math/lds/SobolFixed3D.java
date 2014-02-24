@@ -3,7 +3,7 @@ package roquen.math.lds;
 /**
  * Sobol sequence generator in 3D for a predefined length.
  */
-public final class SobolFixed3D
+public final class SobolFixed3D extends LDS
 {
   // state data
   private int i,d0,d1;
@@ -68,12 +68,21 @@ public final class SobolFixed3D
   /** Sets the first three elements of 'v' to the next value. */
   public final void next(float[] v) { next(v, 0); }
   
-  /** Puts the next value (two elements) into 'fb' */
+  /** Puts the next value (two elements) into 'fb'. */
   public final void next(java.nio.FloatBuffer fb)
   {
     fb.put(i * rlength);
     fb.put((d0 >>> 8) * 0x1p-24f);
     fb.put((d1 >>> 8) * 0x1p-24f);
+    updateState();
+  }
+  
+  /** Puts the next value (two elements) into 'fb' at the specified offset. */
+  public final void next(java.nio.FloatBuffer fb, int off)
+  {
+    fb.put(off++, i * rlength);
+    fb.put(off++, (d0 >>> 8) * 0x1p-24f);
+    fb.put(off,   (d1 >>> 8) * 0x1p-24f);
     updateState();
   }
 }

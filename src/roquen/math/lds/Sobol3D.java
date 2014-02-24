@@ -3,7 +3,7 @@ package roquen.math.lds;
 /**
  * 
  */
-public final class Sobol3D
+public final class Sobol3D extends LDS
 {
   // state data for the sequence
   private int i,d0,d1,d2;
@@ -43,7 +43,16 @@ public final class Sobol3D
   }
   
   /** */
-  public Sobol3D() { d0=d1=d2=i=0; }
+  public Sobol3D() {
+    long t = System.nanoTime();
+    int  m = mix.getAndDecrement();
+    int  x = (int)t;
+    int  y = (int)(t >> 32);
+    int  z = (int)(t * 2685821657736338717L);
+    
+    // TODO: y&z values sucks...hash
+    seed(m^x, m^y, m^z); 
+  }
   
   /** Sets seed values for the three dimensions and resets the stream. */
   public final void seed(int s0, int s1, int s2)
@@ -113,6 +122,15 @@ public final class Sobol3D
     fb.put((d0 >>> 8) * 0x1p-24f);
     fb.put((d1 >>> 8) * 0x1p-24f);
     fb.put((d2 >>> 8) * 0x1p-24f);
+    updateState();
+  }
+  
+  /** Puts the next value (three elements) into 'fb' at the specified offset. */
+  public final void next(java.nio.FloatBuffer fb, int off)
+  {
+    fb.put(off++, (d0 >>> 8) * 0x1p-24f);
+    fb.put(off++, (d1 >>> 8) * 0x1p-24f);
+    fb.put(off,   (d2 >>> 8) * 0x1p-24f);
     updateState();
   }
 }
