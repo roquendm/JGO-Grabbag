@@ -20,11 +20,18 @@ import java.util.*;
  * <p>
  *
  */
+
+// NOTES:
+// 1) This example shows an implementation which stores dvars with their
+//    associated object.  Without change to "user" code this can be flipped
+//    to having a single storage for all containers.
+
 abstract class GameObject<T extends GameObject<T>>
 { 
   //***
   static final String EMPTY_STRING = "";
   
+  /** Transform any nulls into EMPTY_STRING */
   static final String stringFilter(String s)
   {
     if (s != null) return s;
@@ -33,10 +40,10 @@ abstract class GameObject<T extends GameObject<T>>
   
   
   //*** dynamic variable support stuff
-  
   HashMap<String, UserVar> dvars = null;
   
-  final UserVar getVar(String name)
+  /** Returns the variable of the specified name and NILL if it doesn't exist. */
+  public final UserVar getVar(String name)
   {
     if (dvars != null) {
       UserVar v = dvars.get(name);
@@ -104,6 +111,10 @@ abstract class GameObject<T extends GameObject<T>>
     return  getVar(name).getString();
   }
 
+  /** 
+   * Unconditionally removes any variable of the specified name.  In
+   * the container is made empty, the storage is automatically removed.
+   */
   private final void deleteVar(String name)
   {
     if (dvars != null) {

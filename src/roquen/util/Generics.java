@@ -3,6 +3,43 @@ package roquen.util;
 public enum Generics 
 {
   ;
+  
+  public static class Factory<T>
+  {
+    private final Class<T> clazz;
+    
+    public Factory(Class<T> type)
+    {
+      clazz = type;
+    }
+    
+    public final Class<T> getType() { return clazz; }
+    
+    public T[] newArray(int len)
+    {
+      return Generics.newArray(clazz, len);
+    }
+    
+    public T[] newFilledArray(int len)
+    {
+      T[] a = newArray(len);
+      
+      for(int i=0; i<len; i++)
+        a[i] = newInstance();
+   
+      return a;
+    }
+    
+    
+    public T newInstance()
+    {
+      try {
+        return clazz.newInstance();
+      } catch (InstantiationException|IllegalAccessException e) {
+        return null;
+      }
+    }
+  }
 
   
   public static<T> T[] newArray(T obj, int len)
