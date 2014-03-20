@@ -4,6 +4,7 @@ public enum Generics
 {
   ;
   
+  /** Helper class for creating arrays and instances of type T. */
   public static class Factory<T>
   {
     private final Class<T> clazz;
@@ -13,24 +14,36 @@ public enum Generics
       clazz = type;
     }
     
+    @SuppressWarnings("unchecked")
+    public static <T> Factory<T> get(T obj)
+    {
+      return (Factory<T>)new Factory<>(obj.getClass());
+    }
+    
+    /** */
     public final Class<T> getType() { return clazz; }
     
-    public T[] newArray(int len)
+    /** */
+    public final T[] newArray(int len)
     {
       return Generics.newArray(clazz, len);
     }
     
-    public T[] newFilledArray(int len)
+    /** Returns an array of length 'n' filled with instances created by {@link #newInstance()}*/
+    public T[] newFilledArray(int n)
     {
-      T[] a = newArray(len);
+      T[] a = newArray(n);
       
-      for(int i=0; i<len; i++)
+      for(int i=0; i<n; i++)
         a[i] = newInstance();
    
       return a;
     }
     
-    
+    /** 
+     * Instantiate an object of type 'T'. If not overloaded this method uses
+     *  
+     */
     public T newInstance()
     {
       try {

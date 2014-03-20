@@ -56,6 +56,13 @@ public final class SobolFixed3D extends LDS
     i  = 0;
   }
   
+  public final void next(roquen.fake.Vect3f v)
+  {
+    v.x = i * rlength;
+    v.y = (d0 >>> 8) * 0x1p-24f;
+    v.z = (d1 >>> 8) * 0x1p-24f;
+  }
+  
   /** Sets the three elements of 'v' starting of 'off' to the next value. */
   public final void next(float[] v, int off)
   {

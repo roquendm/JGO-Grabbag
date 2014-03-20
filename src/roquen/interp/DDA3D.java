@@ -1,8 +1,11 @@
 package roquen.interp;
 
+import roquen.fake.Vect3f;
+
 /**
  * For performing in-order walks of cells on a uniform 3D grid which
- * are crossed by a line segment or ray.
+ * are crossed by a line segment or ray.  It is equivalent to a
+ * Bresenham's line walk.
  * <p>
  * Passed in values make the assumption that the extent of cells are
  * of one unit.  User code scaling is required for other sizes.
@@ -13,14 +16,6 @@ package roquen.interp;
 public class DDA3D {
   // NOTE: Computation is in doubles.  Usage requires little memory
   // motion and the extra bits allow for larger grids.
-
-  //------ SNIP: Placeholder classes, replace with the real thing
-  public static class Vect3f
-  {
-    public float x,y,z;
-  }
-  //------ SNIP
-  
   
   /** 
    * use-case specific cell offset. default=0 (lower left).

@@ -1,8 +1,11 @@
 package roquen.interp;
 
+import roquen.fake.Vect2f;
+
 /**
  * For performing in-order walks of cells on a uniform 2D grid which
- * are crossed by a line segment or ray.
+ * are crossed by a line segment or ray.  It is equivalent to a
+ * Bresenham's line walk.
  * <p>
  * Passed in values make the assumption that the extent of cells are
  * of one unit.  User code scaling is required for other sizes.
@@ -10,17 +13,7 @@ package roquen.interp;
  * The name is actually a misnomer as the computation is in floating
  * point.  This drastically reduces the complexity of the update.
  */
-public class DDA2D {
-  // NOTE: Computation is in doubles.  Usage requires little memory
-  // motion and the extra bits allow for larger grids.
-  
-  //------ SNIP: Placeholder classes, replace with the real thing
-  public static class Vect2f
-  {
-    public float x,y;
-  }
-  //------ SNIP
-  
+public class DDA2D {  
   /** 
    * use-case specific cell offset. default=0 (lower left).
    * set to .5 for center of cell for example.

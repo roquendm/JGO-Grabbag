@@ -37,6 +37,12 @@ public final class SobolFixed2D extends LDS
     i  = 0;
   }
   
+  public final void next(roquen.fake.Vect2f v)
+  {
+    v.x = i * rlength;
+    v.y = (d0 >>> 8) * 0x1p-24f;
+  }
+  
   /** Sets the two elements of 'v' starting of 'off' to the next value. */
   public final void next(float[] v, int off)
   {
