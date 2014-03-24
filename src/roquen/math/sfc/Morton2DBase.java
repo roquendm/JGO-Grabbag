@@ -96,6 +96,7 @@ abstract class Morton2DBase<T extends Morton2DBase<T>> extends Index2D<T>
     sx &= mx;
   }
   
+  @Override
   public void sub(T v)
   {
     int mx = MASK_X;
