@@ -2,9 +2,26 @@ package roquen.interp;
 
 import roquen.fake.Vect2f;
 
+/**
+ * For performing in-order walks of cells on a uniform 2D grid which
+ * are crossed by a line segment or ray. All covered cells are visited
+ * however it does not provide supercoverage.  Supercoverage is when
+ * all four cells are visited in the case where the ray passes through
+ * a corner.  For a corner case this will visit three out of four. At
+ * each step the next cell will be either a horizontal or vertical move
+ * so in the extreme pathological case this will visit "false positive"
+ * cells, the worst case situation begin a 45 degree angle ray
+ * perfectly through corners where half the visited cells will be
+ * "false positives".  These false positives only occur when hitting
+ * a corner so is of no concern unless the use-case is something like
+ * rayshooting from the center of a cell in only horizontal, vertical or
+ * diagonal directions which isn't the intended usage.
+ * <p>
+ * Passed in values make the assumption that the extent of cells are
+ * of one unit.  User code scaling is required for other sizes.
+ */
 public class RayGrid2D 
 {
-  private double dx,dy;
   private double cx,cy;
   private double ax,ay;
   private int    ux,uy;
@@ -20,8 +37,8 @@ public class RayGrid2D
     y = (int)p0.y; //(int)Math.floor(p0.y);
  
     // direction of the ray
-    dx = p1.x-p0.x;
-    dy = p1.y-p0.y;
+    double dx = p1.x-p0.x;
+    double dy = p1.y-p0.y;
     
     // amount to move in each direction to cross a
     // cell boundary.

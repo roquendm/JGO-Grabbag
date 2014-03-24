@@ -5,7 +5,8 @@ import roquen.fake.Vect2f;
 /**
  * For performing in-order walks of cells on a uniform 2D grid which
  * are crossed by a line segment or ray.  It is equivalent to a
- * Bresenham's line walk.
+ * Bresenham's line walk. The basic mechanism is to determine a major
+ * axis and walk a connected set of cells along that axis. 
  * <p>
  * Passed in values make the assumption that the extent of cells are
  * of one unit.  User code scaling is required for other sizes.

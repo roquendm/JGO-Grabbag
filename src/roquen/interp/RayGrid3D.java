@@ -2,8 +2,11 @@ package roquen.interp;
 
 import roquen.fake.Vect3f;
 
+/**
+ * For performing in-order walks of cells on a uniform 3D grid which
+ * are crossed by a line segment or ray.  For more details see {@link RayGrid2D}
+ */
 public class RayGrid3D {
-  private double dx,dy,dz;
   private double cx,cy,cz;
   private double ax,ay,az;
   private int    ux,uy,uz;
@@ -19,9 +22,9 @@ public class RayGrid3D {
     z = (int)Math.floor(p0.y);
  
     // direction of the ray
-    dx = p1.x-p0.x;
-    dy = p1.y-p0.y;
-    dz = p1.z-p0.z;
+    double dx = p1.x-p0.x;
+    double dy = p1.y-p0.y;
+    double dz = p1.z-p0.z;
     
     // amount to move in each direction to cross a
     // cell boundary.
