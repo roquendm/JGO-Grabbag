@@ -54,6 +54,7 @@ public final class Sobol1D extends LDS implements roquen.math.seq.FloatSequence
   }
   
   /** Returns the next value in the sequence. */
+  @Override
   public final float nextFloat()
   {
     float r = (d0 >>> 8) * 0x1p-24f;
