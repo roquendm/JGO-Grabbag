@@ -1,10 +1,13 @@
-package roquen.math.rng;
+package roquen.math.rng.discrete;
 
 import java.util.*;
 
 import roquen.util.FloatPair;
 import roquen.util.Generics;
 
+/**
+ * 
+ */
 public class RandomSelect<E>
 {
   /** cumulative probabilities of the entries */
@@ -202,7 +205,7 @@ public class RandomSelect<E>
     return sb.toString();
   }
 
-  // -----
+  /*
   public static void main(String[] args)
   {
     Builder<String> builder = RandomSelect.getBuilder();
@@ -233,11 +236,6 @@ public class RandomSelect<E>
       String s1 = select.eval(p1);
       System.out.println(s0 + ", " + s1);
     }
-
-
-
   }
-
-
-
+ */
 }

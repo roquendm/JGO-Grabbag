@@ -8,18 +8,20 @@ import java.util.concurrent.atomic.AtomicLong;
  * All ranges are shown in American notation: square bracket
  * is inclusive and parentheses is exclusive.
  */
-public abstract class PRNG {
+public abstract class PRNG implements roquen.math.seq.IntegerSequence, roquen.math.seq.FloatSequence
+{
   /** Sets the current state data of the generator. */
-  abstract void setSeed(long seed);
+  public abstract void setSeed(long seed);
   
   /** Returns the current state data of the generator. */
-  abstract long getSeed();
+  public abstract long getSeed();
   
   /** Returns a uniform 32-bit integer. */
-  abstract int nextInt();
+  @Override
+  public abstract int nextInt();
   
   /** Returns a uniform 64-bit integer. */
-  abstract long nextLong();
+  public abstract long nextLong();
   
   // just in case we happen to have two threads on different
   // processors make two non-seeded generators within the
@@ -120,6 +122,7 @@ public abstract class PRNG {
    * <p>
    * @see #mapToZO(int)
    */
+  @Override
   public final float nextFloat()
   {
     return mapToZO(nextInt());

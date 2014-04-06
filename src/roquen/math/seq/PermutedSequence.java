@@ -5,7 +5,7 @@ package roquen.math.seq;
  * <p>
  * Implementation is a simple rejection method built on top of {@link #PermutedSequencePOT}
  */
-public class PermutedSequence extends PermutedSequencePOT
+public class PermutedSequence extends PermutedSequencePOT 
 {
   private int length;
 
@@ -26,13 +26,13 @@ public class PermutedSequence extends PermutedSequencePOT
   }
   
   @Override
-  public int next()
+  public int nextInt()
   {
     int r;
     
     // This will loop (on average) no more than twice per call.
     do {
-      r = super.next();
+      r = super.nextInt();
       if (r < length)
         return r;
     } while(true);

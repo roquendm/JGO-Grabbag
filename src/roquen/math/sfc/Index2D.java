@@ -28,6 +28,11 @@ public abstract class Index2D<T extends Index2D<T>>
   /** Sets the represented X coordinate */
   public abstract void setY(int y);
   
+  public void set(int x, int y)
+  {
+    setX(x); setY(y);
+  }
+  
   /** Fill 'v' with the represented 2D coordinate */
   public abstract void get(Vect2i v);
   

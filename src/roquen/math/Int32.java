@@ -10,7 +10,7 @@ public enum Int32 {
   
   // HotSpot has popcount as an intrinsic, but we need a way
   // to test for hardware support...sigh.
-  private static boolean hasPopCount = false;
+  static final boolean hasPopCount = false;
   
   /** 
    * Returns <i>true</i> if 'a' and 'b' have the same sign.
@@ -29,6 +29,35 @@ public enum Int32 {
     return (x & (x-1)) == 0;
   }
  
+  /** Returns 'x' with the lowest set bit zeroed */
+  public static int zeroLowBit(int x)
+  {
+    return x & (x-1);
+  }
+  
+  /** */
+  public static int isolateLowBit(int x)
+  {
+    return x & -x;
+  }
+  
+  /** */
+  public static int isolateLowZero(int x)
+  {
+    return ~x & (x+1);
+  }
+  
+  /** Set all low order bits until a set bit is found. */
+  public static int fillLow(int x)
+  {
+    return x | (x-1);
+  }
+  
+  public static int setLowZero(int x)
+  {
+    return x | (x+1);
+  }
+  
   
   public static int parity(int x)
   {
@@ -45,19 +74,7 @@ public enum Int32 {
   }
   
   
-  public static long parity(long x)
-  {
-    if (hasPopCount)
-      return Long.bitCount(x) & 1;
-    
-    long p;
-    x = (x ^ (x >>> 1));
-    x = (x ^ (x >>> 2)) & 0x1111111111111111L;
-    x = x*0x1111111111111111L;
-    p = (x >> 60) & 1;
-    
-    return p;
-  }
+
   
   /** 
    * Returns 1 for positive, 0 for zero and -1
@@ -120,6 +137,26 @@ public enum Int32 {
     int c = x ^ b;
     int d = (2 + Integer.numberOfTrailingZeros(x));
     return b | (c >>> d);
+  }
+  
+  /** Computes 'a' such that a*x = 1 for odd integers 'x' */
+  public static final int modInverse(int x)
+  {
+    // newton's
+    int r = (x*x)+x - 1;
+    int t = x*r;
+    r *= 2-t; t = x*r;
+    r *= 2-t; t = x*r;
+    r *= 2-t;
+    return r;
+  }
+  
+  public static void main(String[] args) {
+    for(int i=0; i<22; i++) {
+      int r = modInverse(i);
+      int m = i*r;
+      System.out.printf("%d * %s = %s\n", i,Integer.toHexString(r), Integer.toHexString(m));
+    }
   }
   
 }

@@ -6,7 +6,7 @@ package roquen.math.seq;
 /**
  * Computes permuted (random) integers on [0,2<sup>n</sup>) visiting each element exactly once.
  */
-public class PermutedSequencePOT 
+public class PermutedSequencePOT implements IntegerSequence
 {
   private static roquen.math.rng.XorShift32 rng = new roquen.math.rng.XorShift32();
   
@@ -42,7 +42,7 @@ public class PermutedSequencePOT
 
 
   /** Returns the next integer in the sequence. */
-  public int next()
+  public int nextInt()
   {
     v = (m*v + a) & mask;
 

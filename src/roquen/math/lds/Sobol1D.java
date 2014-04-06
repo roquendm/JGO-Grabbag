@@ -3,7 +3,7 @@ package roquen.math.lds;
 /**
  * 
  */
-public final class Sobol1D extends LDS
+public final class Sobol1D extends LDS implements roquen.math.seq.FloatSequence
 {
   // state data
   private int i,d0;
@@ -54,7 +54,7 @@ public final class Sobol1D extends LDS
   }
   
   /** Returns the next value in the sequence. */
-  public final float next()
+  public final float nextFloat()
   {
     float r = (d0 >>> 8) * 0x1p-24f;
     updateState();

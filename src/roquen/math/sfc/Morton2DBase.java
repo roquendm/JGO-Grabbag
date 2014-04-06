@@ -16,19 +16,24 @@ abstract class Morton2DBase<T extends Morton2DBase<T>> extends Index2D<T>
   @Override
   public final void set(Vect2i v)
   {
-   setX(v.x);
-   setY(v.y);
+    //sx = (int)((v.x * 0x0101010101010101L & 0x8040201008040201L) * 0x0102040810204081L >>> 49) & 0x5555;
+    //sy = (int)((v.y * 0x0101010101010101L & 0x8040201008040201L) * 0x0102040810204081L >>> 48) & 0xAAAA;
+    
+    setX(v.x);
+    setY(v.y);
   }
   
   @Override
   public final void setX(int x)
   {
+    //sx = (int)((x * 0x0101010101010101L & 0x8040201008040201L) * 0x0102040810204081L >>> 49) & 0x5555;
     sx = scatter1(x);
   }
   
   @Override
   public final void setY(int y)
   {
+    //sy = (int)((y * 0x0101010101010101L & 0x8040201008040201L) * 0x0102040810204081L >>> 48) & 0xAAAA;
     sy = scatter1(y) << 1;
   }
   

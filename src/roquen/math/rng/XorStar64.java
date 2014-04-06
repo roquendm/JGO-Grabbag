@@ -32,13 +32,13 @@ public final class XorStar64 extends PRNG64
   }
 
   @Override
-  void setSeed(long seed) {
+  public void setSeed(long seed) {
     if (seed == 0) seed = Long.MIN_VALUE;
     data = seed;
   }
 
   @Override
-  long getSeed() {
+  public long getSeed() {
     return data;
   }
 }

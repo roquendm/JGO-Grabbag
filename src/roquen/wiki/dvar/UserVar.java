@@ -1,11 +1,17 @@
 package roquen.wiki.dvar;
 
-/** */
+/**
+ * Minimal example of implementing a limited form of prototype based variables.
+ */
+
 abstract class UserVar
 {
   /** */
   public enum TYPE
   {
+    // these are here mostly to allow the holding container to perform
+    // in-place updates, which the example container "GameObject" does
+    // not.
     NONE,
     INTEGER,
     FLOAT,

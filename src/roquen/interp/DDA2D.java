@@ -36,22 +36,14 @@ public class DDA2D {
   /** current step (cell) coordinate, includes fractional */
   public double x,y;
   
-  /**
-   * Sets the instance to iterate over all cells covered
-   * by the line segment from p0 to p1 in order.  Return
-   * the number of steps required.
-   * <p>
-   * The fields ({@link #x}, {@link #y}) are
-   * set to the first cell coordinate.
-   */
-  public int set(Vect2f p0, Vect2f p1)
+  public int set(float sx, float sy, float ex, float ey)
   {
     // find the cell coordinate of the end points
-    x0 = Math.floor(p0.x);
-    y0 = Math.floor(p0.y);
+    x0 = Math.floor(sx);
+    y0 = Math.floor(sy);
     
-    double x1 = Math.floor(p1.x);
-    double y1 = Math.floor(p1.y);
+    double x1 = Math.floor(ex);
+    double y1 = Math.floor(ey);
     
     // initialize current cell coordinate
     x = x0 + offset;
@@ -70,6 +62,19 @@ public class DDA2D {
     in = 1.0/n;
     
     return (int)n;
+  }
+  
+  /**
+   * Sets the instance to iterate over all cells covered
+   * by the line segment from p0 to p1 in order.  Return
+   * the number of steps required.
+   * <p>
+   * The fields ({@link #x}, {@link #y}) are
+   * set to the first cell coordinate.
+   */
+  public int set(Vect2f p0, Vect2f p1)
+  {
+    return set(p0.x,p0.y,p1.x,p1.y);
   }
   
   public final void setCenteredMode(boolean mode)
