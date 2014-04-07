@@ -4,6 +4,8 @@ package roquen.math;
 // NOTES: Includes some uber basics for those not familiar with their bit-twiddling.
 // These will all be small and are highly likely to be inlined
 
+// The final on methods is implicitly, explicitly marked
+// because it can't hurt.
 public enum Int32 {
   
   ;
@@ -16,7 +18,7 @@ public enum Int32 {
    * Returns <i>true</i> if 'a' and 'b' have the same sign.
    * Zero is considered to be positive.
    */
-  public static boolean sameSign(int a, int b)
+  public static final boolean sameSign(int a, int b)
   {
     return (a^b) >= 0;
   }
@@ -24,42 +26,87 @@ public enum Int32 {
   /**
    * Returns <i>true<i> if 'x' is zero or a power-of-two.
    */
-  public static boolean isZeroOrPOT(int x)
+  public static final boolean isZeroOrPOT(int x)
   {
     return (x & (x-1)) == 0;
   }
  
   /** Returns 'x' with the lowest set bit zeroed */
-  public static int zeroLowBit(int x)
+  public static final int zeroLowBit(int x)
   {
     return x & (x-1);
   }
   
   /** */
-  public static int isolateLowBit(int x)
+  public static final int isolateLowBit(int x)
   {
     return x & -x;
   }
   
   /** */
-  public static int isolateLowZero(int x)
+  public static final int isolateLowZero(int x)
   {
     return ~x & (x+1);
   }
   
   /** Set all low order bits until a set bit is found. */
-  public static int fillLow(int x)
+  public static final int fillLow(int x)
   {
     return x | (x-1);
   }
   
-  public static int setLowZero(int x)
+  /** Set the lowest zero to one. No effect in none. */
+  public static final int setLowZero(int x)
   {
     return x | (x+1);
   }
   
   
-  public static int parity(int x)
+  
+  /** (a >= 0) ? a : 0 */
+  public static final int clampPositive(int a)
+  {
+    return a & ~(a >> 31); // dep-chain=3
+  }
+
+  public static final int abs(int a)
+  {
+    // dep-chain=3
+    int s = a >> 31;
+    a ^= s;
+    a -= s;
+    return a;
+  }
+
+  public static final int min(int a, int b)
+  {
+    // dep-chain=4
+    a -= b;
+    a &= (a >> 31);
+    a += b;
+
+    return a;
+  }
+
+  /** */
+  public static final int max(int a, int b)
+  {
+    // dep-chain=4
+    a -= b;    
+    a &= ~(a >> 31);
+    a += b;    
+
+    return a;
+  }
+
+  /** (a<b) ? c : d */
+  public static final int select(int a, int b, int c, int d)
+  {
+    // dep-chain=4
+    return (((a-b)>>31) & (c^d))^d;
+  }
+  
+  public static final int parity(int x)
   {
     if (hasPopCount)
       return Integer.bitCount(x) & 1;
@@ -72,9 +119,6 @@ public enum Int32 {
     
     return p;
   }
-  
-  
-
   
   /** 
    * Returns 1 for positive, 0 for zero and -1
@@ -150,13 +194,4 @@ public enum Int32 {
     r *= 2-t;
     return r;
   }
-  
-  public static void main(String[] args) {
-    for(int i=0; i<22; i++) {
-      int r = modInverse(i);
-      int m = i*r;
-      System.out.printf("%d * %s = %s\n", i,Integer.toHexString(r), Integer.toHexString(m));
-    }
-  }
-  
 }

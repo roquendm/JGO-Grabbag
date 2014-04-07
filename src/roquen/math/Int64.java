@@ -4,7 +4,10 @@ public enum Int64
 {
   ;
   
-  // The basic bit-hacks can just be copied from Int32
+  // The basic bit-hacks can just be copied from Int32.
+  // Note that HotSpot as of this writing performs less
+  // optimizations for 64-bit integers than 32-bit..
+  // sigh.
   
   public static long parity(long x)
   {
