@@ -1,10 +1,11 @@
 package roquen.math.rng.discrete;
 
 import roquen.math.rng.PRNG;
-import roquen.math.rng.XorStar64;
-
 
 /**
+ * An instance of this class represents a fixed arbitrary discrete
+ * probability distribution function via Vose's alias method.  
+ * <p>
  * 
  * <p>
  * <i>"A Linear Algorithm For Generating Random Numbers With a Given Distribution"</i>, 
@@ -99,7 +100,50 @@ public class AliasMethod
 
     return make_(sa, sum);
   }
+  
+  public static AliasMethod make(float[] w)
+  {
+    int      len = w.length;
+    double   sum = 0;
+    double[] sa  = new double[len];
 
+    // Compute the total weight of the input set and
+    // copy the original array.
+    for (int i = 0; i != len; i++) {
+      double wi = w[i];
+      
+      if (wi < 0)
+        throw new IllegalArgumentException("AliasMethod: negative weight");
+      
+      sa[i] = wi;
+      sum  += wi;
+    }
+
+    return make_(sa, sum);
+  }
+
+  public static AliasMethod make(int[] w)
+  {
+    int      len = w.length;
+    double   sum = 0;
+    double[] sa  = new double[len];
+
+    // Compute the total weight of the input set and
+    // copy the original array.
+    for (int i = 0; i != len; i++) {
+      double wi = w[i];
+      
+      if (wi < 0)
+        throw new IllegalArgumentException("AliasMethod: negative weight");
+      
+      sa[i] = wi;
+      sum  += wi;
+    }
+
+    return make_(sa, sum);
+  }
+  
+  
   /** Returns the next value in the distribution. */
   public int nextInt(PRNG random)
   {
@@ -110,11 +154,11 @@ public class AliasMethod
     return p <= prob[j] ? j : alias[j];
   }
   
-  
+  /*
   @SuppressWarnings("boxing")
   public static void main(String[] args)
   {
-    XorStar64 rng = new XorStar64();
+    roquen.math.rng.XorStar64 rng = new roquen.math.rng.XorStar64();
     
     for(int t=0; t<13; t++) {
       int len = rng.nextInt(5)+2;
@@ -158,11 +202,6 @@ public class AliasMethod
       
       System.out.println();System.out.println();
     }
-    
-    
-    
   }
-  
-  
-  
+  */
 }
