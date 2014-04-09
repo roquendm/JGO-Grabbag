@@ -6,7 +6,13 @@ import roquen.util.FloatPair;
 import roquen.util.Generics;
 
 /**
- * 
+ * <p>
+ * Implementation is classic building a CDF (partitioning the
+ * range [0,1] into intervals), generate a random number on
+ * [0,1) and find the interval containing the number by
+ * binary search and the associated value is the result.
+ * There's a twist (again classic) is that the range is split
+ * into two (see code) for better representation.
  */
 public class RandomSelect<E>
 {

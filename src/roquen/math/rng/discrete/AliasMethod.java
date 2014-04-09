@@ -6,7 +6,11 @@ import roquen.math.rng.PRNG;
  * An instance of this class represents a fixed arbitrary discrete
  * probability distribution function via Vose's alias method.  
  * <p>
- * 
+ * Specifically a set of 'n' weights are provided at generation
+ * time.  These values are converted into probabilities and an
+ * efficient representation is created to return a random integer
+ * on the range [0,n) with these probabilities.
+ * <p>
  * <p>
  * <i>"A Linear Algorithm For Generating Random Numbers With a Given Distribution"</i>, 
  * Michael D. Vose, 1991.
@@ -101,6 +105,7 @@ public class AliasMethod
     return make_(sa, sum);
   }
   
+  /** */
   public static AliasMethod make(float[] w)
   {
     int      len = w.length;
@@ -122,6 +127,7 @@ public class AliasMethod
     return make_(sa, sum);
   }
 
+  /** */
   public static AliasMethod make(int[] w)
   {
     int      len = w.length;
