@@ -3,49 +3,28 @@ package roquen.math.rng.discrete;
 import roquen.math.rng.PRNG;
 
 /**
- * An instance of this class represents a fixed arbitrary discrete
- * probability distribution function via Vose's alias method.  
- * <p>
- * Specifically a set of 'n' weights are provided at generation
- * time.  These values are converted into probabilities and an
- * efficient representation is created to return a random integer
- * on the range [0,n) with these probabilities.  Generating the
- * data tables requires linear time and once constructed performing
- * a query is constant time.  Storage cost is 2n.
+ * Example specialized version of {@link AliasMethod}.
  * <p>
  * <p>
- * <i>"A Linear Algorithm For Generating Random Numbers With a Given Distribution"</i>, 
- * Michael D. Vose, 1991.
- * <p>
- * @see http://www.keithschwarz.com/darts-dice-coins/
+ * See code comments for the variant(s).
  */
-public class AliasMethod extends DiscreteMethod
+public class AliasMethodFlat extends DiscreteMethod
 {
-  // NOTES: If you've found this class by a web-search then
-  // you're probably doing scientific computation and you
-  // need to modify it. Notably change 'prob' to a more
-  // appropriate type and matching PRNG generation in
-  // 'nextInt'.
-  
-  /** Probability that the original column should be chosen.  */
-  private final float[] prob;
-
-  /** The second rectangle */
-  private final int[] alias;
+  private final float[] data;
+  private final int size;
 
   /** The range of the distribution. */
   public int getSize() {
-    return alias.length;
-  }
-
-  private AliasMethod(float[] prob, int[] alias)
-  {
-    this.prob  = prob;
-    this.alias = alias;
+    return size;
   }
   
-  /** Core routine for building the tables. This could be optimized. */
-  private static AliasMethod make_(double[] w, double sum)
+  private AliasMethodFlat(float[] d)
+  {
+    data = d;
+    size = data.length >>> 1;
+  }
+  
+  private static AliasMethodFlat make_(double[] w, double sum)
   {
     int len = w.length;
     double scale = len / sum;
@@ -56,8 +35,7 @@ public class AliasMethod extends DiscreteMethod
     int   li = 0;
 
     // convert weights into scaled probabilities and partition
-    // the input into a big and small set. The temp arrays
-    // can be eliminated.
+    // the input into a big and small set.
     for (int i = 0; i != len; i++) {
       
       double p = w[i] = w[i] * scale;
@@ -68,17 +46,16 @@ public class AliasMethod extends DiscreteMethod
         ss[si++] = i;
     }
 
-    float[]  prob  = new float[len];
-    int[]    alias = new int[len];
+    float[]  data  = new float[len*2];
     
-    // construct the probability & alias tables. SEE: paper
-    // or above provided linked.
     while (si != 0 && li != 0) {
       int ws = ss[--si];
       int wl = ls[--li];
-      prob[ws]  = (float)w[ws];
-      alias[ws] = wl;
-      w[wl]    = (w[wl] + w[ws]) - 1;
+      int id = ws<<1;
+      
+      data[id]   = (float)w[ws];
+      data[id+1] = wl;
+      w[wl]      = (w[wl] + w[ws]) - 1;
       
       if (w[wl] > 1)
         ls[li++] = wl;
@@ -86,21 +63,13 @@ public class AliasMethod extends DiscreteMethod
         ss[si++] = wl;
     }
 
-    // if either/both of list are not empty then
-    // fill the associated prob with insured selection
-    // (no alias for that slot).
-    while (si != 0) prob[ss[--si]] = 1;
-    while (li != 0) prob[ls[--li]] = 1;
+    while (si != 0) data[ss[--si]<<1] = 1;
+    while (li != 0) data[ls[--li]<<1] = 1;
     
-    return new AliasMethod(prob, alias);
+    return new AliasMethodFlat(data);
   }
 
-  /**
-   * Returns an AliasMethod instance which represents
-   * the specified weights.
-   * <p>
-   */
-  public static AliasMethod make(double[] w)
+  public static AliasMethodFlat make(double[] w)
   {
     int      len = w.length;
     double   sum = 0;
@@ -121,8 +90,8 @@ public class AliasMethod extends DiscreteMethod
     return make_(sa, sum);
   }
   
-  /** @see #make(double[]) */
-  public static AliasMethod make(float[] w)
+  /** */
+  public static AliasMethodFlat make(float[] w)
   {
     int      len = w.length;
     double   sum = 0;
@@ -143,8 +112,8 @@ public class AliasMethod extends DiscreteMethod
     return make_(sa, sum);
   }
 
-  /** @see #make(double[]) */
-  public static AliasMethod make(int[] w)
+  /** */
+  public static AliasMethodFlat make(int[] w)
   {
     int      len = w.length;
     double   sum = 0;
@@ -166,31 +135,17 @@ public class AliasMethod extends DiscreteMethod
   }
   
   
-  /** 
-   * Returns the next value in the distribution.
-   * <p>
-   * The result is on [0, {@link #getSize()})
-   * <p>
-   * Requires generating two uniform samples from
-   * 'rng' and one or two table lookups and
-   * completes in constant time.
-   */
+  /** Returns the next value in the distribution. */
   @Override
   public int nextInt(PRNG rng)
-  {
-    // Vose's version
- //   double p = alias.length*rng.nextDouble();
- //   int    i = (int)p;
- //   return p-i <= prob[i] ? i : alias[i];
-    
-    // Deviation from Vose here.  Generate two 
-    // uniforms instead of one.
-    int   i = rng.nextInt(alias.length);
+  { 
+    int   v = rng.nextInt(size);
+    int   i = v+v;
     float p = rng.nextFloat(); 
-    return p <= prob[i] ? i : alias[i];
+    return p <= data[i] ? v : (int)data[i+1];
   }
   
-  /*
+ 
   @SuppressWarnings("boxing")
   public static void main(String[] args)
   {  
@@ -214,7 +169,7 @@ public class AliasMethod extends DiscreteMethod
       System.out.println();
       
       final int trials = 1000000;
-      AliasMethod select = make(w);
+      AliasMethodFlat select = make(w);
       
       for(int i=0; i<trials; i++) {
         h[select.nextInt(rng)]++;
@@ -239,5 +194,5 @@ public class AliasMethod extends DiscreteMethod
       System.out.println();System.out.println();
     }
   }
-  */
+  
 }

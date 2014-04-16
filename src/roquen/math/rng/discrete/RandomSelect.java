@@ -6,6 +6,12 @@ import roquen.util.FloatPair;
 import roquen.util.Generics;
 
 /**
+ * A arbitrary discrete probability distribution which
+ * instead of returning an integer directly maps to
+ * a provided object.  Implementation targets reduced
+ * data sizes instead of speed.  Specifically a lookup
+ * is O(ln n) instead of the O(1) of {@link AliasMethod}
+ * and requires 'n' less storage.
  * <p>
  * Implementation is classic building a CDF (partitioning the
  * range [0,1] into intervals), generate a random number on
@@ -13,6 +19,8 @@ import roquen.util.Generics;
  * binary search and the associated value is the result.
  * There's a twist (again classic) is that the range is split
  * into two (see code) for better representation.
+ * <p>
+ * 
  */
 public class RandomSelect<E>
 {
@@ -140,6 +148,8 @@ public class RandomSelect<E>
 
   /**
    * Transform uniform value 'u' into the represented distribution.
+   * <p>
+   * Computational time is O(ln n).
    */
   public E eval(float u)
   {
