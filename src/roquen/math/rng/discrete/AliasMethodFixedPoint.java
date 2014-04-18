@@ -4,13 +4,19 @@ import roquen.math.rng.PRNG;
 
 /**
  * Example specialized version of {@link AliasMethod}. Flattens
- * the two internal arrays into a one.  This will reduce the
- * number of memory-load stalls for expected access patterns.
+ * the two internal arrays into a one like {@link AliasMethodFlat}
+ * and stores probabilities in fixed point.  Drops a conversion
+ * to floating point and a multiple in each {@link #nextInt(PRNG)}
  */
-
-public class AliasMethodFlat extends DiscreteMethod
+public class AliasMethodFixedPoint extends DiscreteMethod
 {
-  private final float[] data;
+  // 'nextInt' could loose the shift on the computation of 'p'
+  // by either using unsigned comparisons of JDK8 or by biasing
+  // the probability table entries (equivalent to unsigned comparisons).
+  // this additionally improves the fixed-point representation by
+  // giving it one more bit to work with.
+  
+  private final int[] data;
   private final int size;
 
   /** The range of the distribution. */
@@ -18,13 +24,13 @@ public class AliasMethodFlat extends DiscreteMethod
     return size;
   }
   
-  private AliasMethodFlat(float[] d)
+  private AliasMethodFixedPoint(int[] d)
   {
     data = d;
     size = data.length >>> 1;
   }
   
-  private static AliasMethodFlat make_(double[] w, double sum)
+  private static AliasMethodFixedPoint make_(double[] w, double sum)
   {
     int len = w.length;
     double scale = len / sum;
@@ -44,14 +50,14 @@ public class AliasMethodFlat extends DiscreteMethod
         ss[si++] = i;
     }
 
-    float[]  data  = new float[len*2];
+    int[]  data  = new int[len*2];
     
     while (si != 0 && li != 0) {
       int ws = ss[--si];
       int wl = ls[--li];
       int id = ws<<1;
       
-      data[id]   = (float)w[ws];
+      data[id]   = (int)(w[ws]*Integer.MAX_VALUE); // see 'bias' above
       data[id+1] = wl;
       w[wl]      = (w[wl] + w[ws]) - 1;
       
@@ -61,13 +67,13 @@ public class AliasMethodFlat extends DiscreteMethod
         ss[si++] = wl;
     }
 
-    while (si != 0) data[ss[--si]<<1] = 1;
-    while (li != 0) data[ls[--li]<<1] = 1;
+    while (si != 0) data[ss[--si]<<1] = Integer.MAX_VALUE; // see 'bias' above
+    while (li != 0) data[ls[--li]<<1] = Integer.MAX_VALUE; // see 'bias' above
     
-    return new AliasMethodFlat(data);
+    return new AliasMethodFixedPoint(data);
   }
 
-  public static AliasMethodFlat make(double[] w)
+  public static AliasMethodFixedPoint make(double[] w)
   {
     int      len = w.length;
     double   sum = 0;
@@ -89,7 +95,7 @@ public class AliasMethodFlat extends DiscreteMethod
   }
   
   /** */
-  public static AliasMethodFlat make(float[] w)
+  public static AliasMethodFixedPoint make(float[] w)
   {
     int      len = w.length;
     double   sum = 0;
@@ -111,7 +117,7 @@ public class AliasMethodFlat extends DiscreteMethod
   }
 
   /** */
-  public static AliasMethodFlat make(int[] w)
+  public static AliasMethodFixedPoint make(int[] w)
   {
     int      len = w.length;
     double   sum = 0;
@@ -137,10 +143,10 @@ public class AliasMethodFlat extends DiscreteMethod
   @Override
   public int nextInt(PRNG rng)
   { 
-    int   v = rng.nextInt(size);
-    int   i = v+v;
-    float p = rng.nextFloat(); 
-    return p <= data[i] ? v : (int)data[i+1];
+    int v = rng.nextInt(size);
+    int i = v+v;
+    int p = rng.nextInt()>>>1;           // see 'bias' above
+    return p <= data[i] ? v : data[i+1]; // see 'bias' above
   }
   
  /*
@@ -167,7 +173,7 @@ public class AliasMethodFlat extends DiscreteMethod
       System.out.println();
       
       final int trials = 1000000;
-      AliasMethodFlat select = make(w);
+      AliasMethodFixedPoint select = make(w);
       
       for(int i=0; i<trials; i++) {
         h[select.nextInt(rng)]++;
