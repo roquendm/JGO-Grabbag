@@ -1,10 +1,8 @@
 package roquen.math.rng;
 
-
-
 /***
  * <p>
- * "An experimental exploration of Marsaglia's xorshift generators, scrambled",
+ * <i>"An experimental exploration of Marsaglia's xorshift generators, scrambled"</i>,
  * Sebastiano Vigna, 2014
  */
 

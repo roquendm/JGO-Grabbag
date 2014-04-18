@@ -138,7 +138,7 @@ public enum MurmurHash2
     int c = a.length;
     int i = 0;
     
-    while(c > 4) {
+    while(c >= 4) {
       h = hashAdd(h, a[i], a[i+1], a[i+2], a[i+3]);
       i += 4;
       c -= 4;
@@ -156,7 +156,7 @@ public enum MurmurHash2
     int c = a.length;
     int i = 0;
     
-    while(c > 4) {
+    while(c >= 4) {
       h = hashAdd(h, a[i], a[i+1], a[i+2], a[i+3]);
       i += 4;
       c -= 4;
@@ -174,7 +174,7 @@ public enum MurmurHash2
     int c = a.length;
     int i = 0;
     
-    while(c > 2) {
+    while(c >= 2) {
       h = hashAdd(h, a[i], a[i+1]);
       i += 2;
       c -= 2;
@@ -192,7 +192,7 @@ public enum MurmurHash2
     int c = a.length;
     int i = 0;
     
-    while(c > 2) {
+    while(c >= 2) {
       h = hashAdd(h, a[i], a[i+1]);
       i += 2;
       c -= 2;

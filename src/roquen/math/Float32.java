@@ -262,4 +262,13 @@ public enum Float32 {
     {
       return 0x1.p-30f * (1<<(30+x));
     }
+    
+    /**
+     * Returns the IEEE complaint bit format, converting any negative zero to zero.
+     * Does not normalized NaNs. Intended for hashing.
+     */
+    public static final int toBits(float x)
+    {
+      return Float.floatToRawIntBits(0.f+x);
+    }
 }
