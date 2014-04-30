@@ -19,10 +19,22 @@ public enum MurmurHash2
   
   private static final int M = 0x5bd1e995;
   
-  /** A starting value for hash */
+  /** A starting value for hash. */
   public static final int hashInit()
   {
     return 0x9747b28c;
+  }
+  
+  /** */
+  public static final int hashMakeSeed(int h)
+  {
+    return hashComplete(hashAdd(hashInit(),h));
+  }
+  
+  /** */
+  public static final int hashMakeSeed(long h)
+  {
+    return hashComplete(hashAdd(hashInit(),h));
   }
   
   /** Final mixing of the hash */
