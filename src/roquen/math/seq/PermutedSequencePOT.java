@@ -42,6 +42,7 @@ public class PermutedSequencePOT implements IntegerSequence
 
 
   /** Returns the next integer in the sequence. */
+  @Override
   public int nextInt()
   {
     v = (m*v + a) & mask;
