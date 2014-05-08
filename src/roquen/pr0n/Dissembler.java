@@ -9,7 +9,6 @@ public enum Dissembler
 {
   ;
   public static sun.misc.Unsafe unsafe;
-  public static Deceiver deceiver;
 
   static {
     Field f;
@@ -17,17 +16,15 @@ public enum Dissembler
       f = Unsafe.class.getDeclaredField("theUnsafe");
       f.setAccessible(true);
       unsafe = (Unsafe) f.get(null);
-      
-      build();
-      
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
   
-  private static void build() throws Exception
+  /** No protection ATM. Only call once, not thread-safe */
+  public static void loadDeceiver(String base) throws Exception
   {
-    Path path = FileSystems.getDefault().getPath("bin", "roquen", "pr0n", "Deceiver.class");
+    Path path = FileSystems.getDefault().getPath(base, "roquen", "pr0n", "Deceiver.class");
     byte[] b = java.nio.file.Files.readAllBytes(path);
     
     // TODO: Not reliable.  Just a quick hack
@@ -38,34 +35,63 @@ public enum Dissembler
         b[i+1] = b[i+2] = b[i+3] = 0; // make nop
       }
     }
-    
-    
+     
     // system ClassLoader and ProtectionDomain: go go evil!
-    Class<?> clazz = unsafe.defineClass("roquen.pr0n.Deceiver", b, 0, b.length, null, null);
-    deceiver = (Deceiver)clazz.newInstance();
+    unsafe.defineClass("roquen.pr0n.Deceiver", b, 0, b.length, null, null);
   }
   
-  
-  public static void main(String[] args)
+  private static String hexString(byte[] a)
   {
+    int len = a.length - 1;
+
+    StringBuilder b = new StringBuilder();
+    b.append('[');
+    
+    for (int i = 0; ; i++) {
+      int  v = a[i];
+      int  t = (v >> 4) & 0xf;
+      char c = (t <= 9) ? (char)('0'+t) : (char)('A'+t-10);
+      
+      b.append(c);
+      t = a[i] & 0xf;
+      c = (t <= 9) ? (char)('0'+t) : (char)('A'+t-10);
+      b.append(c);
+      
+      if (i == len)
+        return b.append(']').toString();
+      
+      b.append(", ");
+    }
+  }
+  
+  public static void main(String[] args) throws Exception
+  {
+    loadDeceiver("bin");
+    
     java.util.ArrayList<byte[]> foo = new java.util.ArrayList<>();
     java.util.ArrayList<byte[]> bar;
 
+    System.out.println(Unsafe.ARRAY_OBJECT_BASE_OFFSET);
+    
     // allocate some space to remove
     for(int i=0; i<50000; i++) {
       foo.add(new byte[1024]);
     }
 
     // now the arrays we're going to lie about.
-    byte[] ba = new byte[16];
-    int[]  ia = Deceiver.asI(ba);
+    byte[]  ba = new byte[16];
+    int[]   ia = Deceiver.asI(ba);
+    float[] fa = Deceiver.asF(ba);
     
-    ia[0] = 0xdeadbeef;
+    ia[0] = 0xa;
+    fa[3] = 1.f;
+    
+    System.out.println(hexString(ba));
     
     do {
       foo.remove(foo.size()-1); // free up some space
       
-      System.out.println(java.util.Arrays.toString(ba));
+      System.out.println(hexString(ba));
       System.gc(); // try to request a full GC.
 
       // just in case that didn't work let's fill up the heap
@@ -80,10 +106,13 @@ public enum Dissembler
       }
       bar.clear();
 
+      if ((Object)ia != (Object)ba) { System.out.println("x"); }
+      
       ia[0]++;
       ia[1]++;
       ia[2]++;
-      System.out.println(java.util.Arrays.toString(ba));
+      fa[3] += .5f;
+      System.out.println(hexString(ba));
     } while(!foo.isEmpty());
   }
   
