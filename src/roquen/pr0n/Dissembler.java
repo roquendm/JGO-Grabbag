@@ -1,25 +1,15 @@
 package roquen.pr0n;
 
-import java.lang.reflect.Field;
 import java.nio.file.*;
 
 import sun.misc.Unsafe;
+import static roquen.vm.UnsafeUtils.*;
+//import sun.misc.Unsafe;
 
 public enum Dissembler
 {
   ;
-  public static sun.misc.Unsafe unsafe;
 
-  static {
-    Field f;
-    try {
-      f = Unsafe.class.getDeclaredField("theUnsafe");
-      f.setAccessible(true);
-      unsafe = (Unsafe) f.get(null);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
   
   /** No protection ATM. Only call once, not thread-safe */
   public static void loadDeceiver(String base) throws Exception
@@ -39,6 +29,85 @@ public enum Dissembler
     // system ClassLoader and ProtectionDomain: go go evil!
     unsafe.defineClass("roquen.pr0n.Deceiver", b, 0, b.length, null, null);
   }
+  
+  
+  //riven
+  /**
+   *  Convert a raw address into a reference. The GC could have moved
+   *  the actual object between.
+   */
+  public static Object getReference(long a)
+  {
+     Object[] t = new Object[1];
+
+    if (longPointer)
+      unsafe.putLong(t, (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET, a);
+    else
+      unsafe.putInt(t,  (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET, (int)a);
+
+    return t[0];
+ }
+
+  // riven
+  /** Convert a reference into a raw address. */
+  public static long getAddress(Object o)
+  {
+    Object[] t = new Object[] {o};
+    long a;
+    
+    if (longPointer)
+      a = unsafe.getLong(t, (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET);
+    else 
+      a = unsafe.getInt(t,  (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET) & 0xFFFF_FFFFL;
+  
+    return a;
+  }
+  
+  public static int[] asI(Object o)
+  {
+    int[][]  i = new int[1][];
+    Object[] t = new Object[] {o};
+    
+    // the loop is to handle the unlikely case that the GC
+    // moves 'o' between getting the raw address and placing it. 
+    do {
+      if (longPointer) {
+        long a = unsafe.getLong(t, (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET);
+        unsafe.putLong(i, (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET, a);
+      } else {
+        int a = unsafe.getInt(t,  (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET);
+        unsafe.putInt(i,  (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET, a);
+      }
+      
+      if (i[0] == o)
+        return i[0];
+      
+    } while(true);
+  }
+  
+  public static float[] asF(Object o)
+  {
+    // SEE: asI
+    float[][] f = new float[1][];
+    Object[]  t = new Object[] {o};
+    
+    do {
+      if (longPointer) {
+        long a = unsafe.getLong(t, (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET);
+        unsafe.putLong(f, (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET, a);
+      } else {
+        int a = unsafe.getInt(t,  (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET);
+        unsafe.putInt(f,  (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET, a);
+      }
+      
+      if (f[0] == o)
+        return f[0];
+      
+    } while(true);
+  }
+  
+  
+  //*****************************
   
   private static String hexString(byte[] a)
   {
@@ -71,7 +140,8 @@ public enum Dissembler
     java.util.ArrayList<byte[]> foo = new java.util.ArrayList<>();
     java.util.ArrayList<byte[]> bar;
 
-    System.out.println(Unsafe.ARRAY_OBJECT_BASE_OFFSET);
+    //System.out.println(Unsafe.ARRAY_OBJECT_BASE_OFFSET);
+    //System.out.println(Unsafe.ARRAY_OBJECT_INDEX_SCALE);
     
     // allocate some space to remove
     for(int i=0; i<50000; i++) {
@@ -80,8 +150,11 @@ public enum Dissembler
 
     // now the arrays we're going to lie about.
     byte[]  ba = new byte[16];
-    int[]   ia = Deceiver.asI(ba);
-    float[] fa = Deceiver.asF(ba);
+    int[]   ia = asI(ba);//Deceiver.asI(ba);
+    float[] fa = asF(ba);//Deceiver.asF(ba);
+  //long    x  = getAddress(ba); 
+    
+  //System.out.println(Long.toHexString(x));
     
     ia[0] = 0xa;
     fa[3] = 1.f;
@@ -105,15 +178,24 @@ public enum Dissembler
         //
       }
       bar.clear();
-
+      
       if ((Object)ia != (Object)ba) { System.out.println("x"); }
       
       ia[0]++;
       ia[1]++;
       ia[2]++;
       fa[3] += .5f;
-      System.out.println(hexString(ba));
+      System.out.println(hexString(ba)
+          + " " + Long.toHexString(Dissembler.getAddress(ba))
+          + " " + Long.toHexString(Dissembler.getAddress(ba))
+          );
     } while(!foo.isEmpty());
+    
+  //System.out.println(x);
   }
+
+
+
+
   
 }

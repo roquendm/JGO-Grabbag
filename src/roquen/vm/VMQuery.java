@@ -5,6 +5,7 @@ import java.lang.management.*;
 
 import com.sun.management.*;
 
+// tossed together for some testing...might be useful in the future.
 public enum VMQuery
 {
   ;
@@ -54,11 +55,6 @@ public enum VMQuery
     return getOption(name).getValue();
   }
   
-  public static VMOption getCompressOops()
-  {
-    return getOption("UseCompressedOops");
-  }
-  
   public static boolean isCompressedOops() 
   {
     return getBooleanOption("UseCompressedOops");
@@ -71,7 +67,7 @@ public enum VMQuery
   
   public static void main(String[] args)
   {
-    System.out.println(getOption("UseCompressedOops"));
-    System.out.println(getOption("UseCompressedClassPointers"));
+    //System.out.println(getOption("PrintC"));
+    System.out.println(getOption("PrintCompilation2"));
   }
 }
