@@ -10,6 +10,59 @@ public enum Dissembler
 {
   ;
 
+  /**
+   * <i>true</i> if VM oop headers appear to be in the expected layout.
+   * <p>
+   */
+  public static final boolean hasExpectedOopHeaders = checkHeaders();
+  
+  private static final boolean checkHeaders() 
+  {
+    // expecting:
+    // mark   (native) = ADDRESS_SIZE
+    // class  (4 for 32/64+coop, 8 for 64) = ARRAY_OBJECT_INDEX_SCALE
+    // length (if array = 4)
+    // pad    (if needed to align to 64-bits for 64-bit elements)
+   
+    int AS = Unsafe.ADDRESS_SIZE;              // mark work (native pointer)
+    int PS = Unsafe.ARRAY_OBJECT_INDEX_SCALE;  // class pointer (perhaps compressed)
+    
+    // The 'length' entry for an array should match
+    // 'value' of the single 32-bit field object
+    Integer iw = null;
+    
+    for (int i=1; i<16; i++) {
+      iw = Integer.valueOf(i);
+      if (unsafe.getInt(iw, (long)(PS+AS)) != i)
+        return false;
+    }
+    
+    int  c0 = unsafe.getInt(iw, 0L);
+    long c1 = getAddress(Integer.class);
+    System.out.println(c0 + " " + c1);
+    System.identityHashCode(iw);
+    c0 = unsafe.getInt(iw, 0L);
+    c1 = getAddress(Integer.class);
+    System.out.println(c0 + " " + c1);
+    
+    
+    // T {0=32 bit, 1=64+coop, 2=64}
+    int t = ((Unsafe.ARRAY_OBJECT_INDEX_SCALE+Unsafe.ADDRESS_SIZE) >> 2)-2;
+    
+    // on 64-bit we expect all array headers to be 24/16 (for coop)
+    // on 32-bit: 12 for 32-bit elements and smaller, otherwise 16
+    
+    /*
+    for (int i=0; i<3; i++) {
+      Integer t0 = Integer.valueOf(i);
+      int     ex = unsafe.getInt(t0, (long)(PS+AS));
+      System.out.println(ex);
+    }
+    */
+    
+    // TODO: complete the check
+    return true;
+  }
   
   /** No protection ATM. Only call once, not thread-safe */
   public static void loadDeceiver(String base) throws Exception
@@ -136,10 +189,16 @@ public enum Dissembler
   public static void main(String[] args) throws Exception
   {
     loadDeceiver("bin");
+    System.out.println(hasExpectedOopHeaders);
+    
+    Integer wi = Integer.valueOf(666);
+    int[]   zz = asI(wi);
+    System.out.println(zz.length);
     
     java.util.ArrayList<byte[]> foo = new java.util.ArrayList<>();
     java.util.ArrayList<byte[]> bar;
 
+    //System.out.println("address size: " + Unsafe.ADDRESS_SIZE);
     //System.out.println(Unsafe.ARRAY_OBJECT_BASE_OFFSET);
     //System.out.println(Unsafe.ARRAY_OBJECT_INDEX_SCALE);
     

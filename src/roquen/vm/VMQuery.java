@@ -65,8 +65,23 @@ public enum VMQuery
     return getBooleanOption("UseCompressedClassPointers");
   }
   
+  //------------
+  public static void dumpAll()
+  {
+    javax.management.MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+    java.util.Set<javax.management.ObjectInstance> list = server.queryMBeans(null, null);
+  
+    for(javax.management.ObjectInstance oi : list) {
+      System.out.println("class:  " + oi.getClassName());
+      System.out.println("object: " + oi.getObjectName());
+    }
+  }
+  
+  
+  
   public static void main(String[] args)
   {
+    dumpAll();
     //System.out.println(getOption("PrintC"));
     System.out.println(getOption("PrintCompilation2"));
   }
