@@ -38,16 +38,14 @@ public enum VMQuery
     return none;
   }
   
-  @SuppressWarnings("boxing")
   public static boolean getBooleanOption(String name)
   {
-    return Boolean.valueOf(getOption(name).getValue());
+    return Boolean.parseBoolean(getOption(name).getValue());
   }
  
-  @SuppressWarnings("boxing")
   public static int getIntOption(String name)
   {
-    return Integer.valueOf(getOption(name).getValue());
+    return Integer.parseInt(getOption(name).getValue());
   }
   
   public static String getStringOption(String name)
