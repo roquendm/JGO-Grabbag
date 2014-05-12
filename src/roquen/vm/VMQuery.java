@@ -76,7 +76,6 @@ public enum VMQuery
   }
   
   
-  
   public static void main(String[] args)
   {
     dumpAll();

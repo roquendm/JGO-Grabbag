@@ -84,37 +84,6 @@ public enum Dissembler
   }
   
   
-  //riven
-  /**
-   *  Convert a raw address into a reference. The GC could have moved
-   *  the actual object between.
-   */
-  public static Object getReference(long a)
-  {
-     Object[] t = new Object[1];
-
-    if (longPointer)
-      unsafe.putLong(t, (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET, a);
-    else
-      unsafe.putInt(t,  (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET, (int)a);
-
-    return t[0];
- }
-
-  // riven
-  /** Convert a reference into a raw address. */
-  public static long getAddress(Object o)
-  {
-    Object[] t = new Object[] {o};
-    long a;
-    
-    if (longPointer)
-      a = unsafe.getLong(t, (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET);
-    else 
-      a = unsafe.getInt(t,  (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET) & 0xFFFF_FFFFL;
-  
-    return a;
-  }
   
   public static int[] asI(Object o)
   {
@@ -245,8 +214,8 @@ public enum Dissembler
       ia[2]++;
       fa[3] += .5f;
       System.out.println(hexString(ba)
-          + " " + Long.toHexString(Dissembler.getAddress(ba))
-          + " " + Long.toHexString(Dissembler.getAddress(ba))
+          + " " + Long.toHexString(getAddress(ba))
+          + " " + Long.toHexString(getAddress(ba))
           );
     } while(!foo.isEmpty());
     
