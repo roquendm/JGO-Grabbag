@@ -13,7 +13,10 @@ package roquen.pr0n;
  *  to multiple views of the same array are alias and removable.
  *  It will then be in untested cases of the backend compiler.
  */
-public enum Deceiver 
+
+// On HotSpot this could extend sun.reflect.MagicAccessorImpl
+// which is a backend class to avoid verification.
+public enum Deceiver
 {
   ;
   
@@ -21,9 +24,10 @@ public enum Deceiver
     // Fail straight away if not loaded properly.
     ClassLoader loader = Deceiver.class.getClassLoader();
     if (loader != null)
-      throw new Error("Dissembler must be loaded before Deceiver");
+      throw new Error("Dissembler must be loaded by Deceiver");
   }
   
+  public static byte[]  asB(Object obj) {  return (byte[])obj; }
   public static int[]   asI(Object obj) {  return (int[])obj; }
   public static float[] asF(Object obj) {  return (float[])obj; }
 }

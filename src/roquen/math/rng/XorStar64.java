@@ -2,7 +2,12 @@ package roquen.math.rng;
 
 /***
  * <p>
- * <i>"An experimental exploration of Marsaglia's xorshift generators, scrambled"</i>,
+ * Period: 2<sup>64</sup>-1,
+ * <p>
+ *  References:<list>
+ * <li><i>"Xorshift RNGs"</i>, George Marsaglia, 2003.</li>
+ * <li><i>"Tables of linear congruential generators of different sizes and good lattice structure"</i>, Pierre L'Ecuyer, 1999.</li>
+ * <li><i>"An experimental exploration of Marsaglia's xorshift generators, scrambled"</i></li>,
  * Sebastiano Vigna, 2014
  */
 

@@ -1,6 +1,6 @@
 package roquen.util;
 
-import java.lang.reflect.*;
+//import java.lang.reflect.*;
 import java.util.function.Function;
 
 public enum Generics 

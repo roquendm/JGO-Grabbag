@@ -75,7 +75,7 @@ public enum Dissembler
       
       // look for bytecode sequence: aload_0, checkcast(u16), areturn
       if (b[i] == 0x2a && b[i+1] == (byte)0xC0  && b[i+4] == (byte)0xb0) {
-        b[i+1] = b[i+2] = b[i+3] = 0; // make nop
+        b[i+1] = b[i+2] = b[i+3] = 0; // make checkcast nops
       }
     }
      
@@ -101,6 +101,8 @@ public enum Dissembler
         unsafe.putInt(i,  (long)Unsafe.ARRAY_OBJECT_BASE_OFFSET, a);
       }
       
+      // This construction has the same potential problem as
+      // Deceiver's.  The pointers can be seen to be aliases.
       if (i[0] == o)
         return i[0];
       
@@ -166,7 +168,7 @@ public enum Dissembler
     
     java.util.ArrayList<byte[]> foo = new java.util.ArrayList<>();
     java.util.ArrayList<byte[]> bar;
-
+    
     //System.out.println("address size: " + Unsafe.ADDRESS_SIZE);
     //System.out.println(Unsafe.ARRAY_OBJECT_BASE_OFFSET);
     //System.out.println(Unsafe.ARRAY_OBJECT_INDEX_SCALE);
