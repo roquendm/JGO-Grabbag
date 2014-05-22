@@ -13,9 +13,19 @@ public enum Float32 {
   
   ;
 
+  // TODO: these should be change to pre-computed correctly
+  // rounded hex constants.
+  
   public static final float PI        = (float)(Math.PI);
   public static final float PI_OVER_2 = (float)(Math.PI/2);
   public static final float PI_OVER_4 = (float)(Math.PI/4);
+  
+  public static final float ONE_OVER_LOG_2 = (float)(1.0/Math.log(2));
+  public static final float LOG_2 = (float)Math.log(2);
+  public static final float LOG_2_OVER_LOG_10 = 0x1.344136p-2f;
+ 
+  public static final float SQRT_2 = (float)Math.sqrt(2);
+  
 
   /** Return 'x' multiplied by the sign of 'y'. */
   // copySign isn't yet an intrinsic, so this isn't a desirable function to call.
@@ -145,7 +155,7 @@ public enum Float32 {
       int   i = Float.floatToRawIntBits(x);
       int   e = ((i >>> 23) & 0xff)-127;
       float y = Float.intBitsToFloat(i - (e<<23));
-      float r = (y-sqrtOf2f)/(y+sqrtOf2f);
+      float r = (y-SQRT_2)/(y+SQRT_2);
       float b = r * r;
       float a;
       
@@ -156,8 +166,6 @@ public enum Float32 {
     }
     
     
-    // TODO: change to pre-calculated correctly round hex constant
-    private static final float oneOverLog2 = (float)(1.0/Math.log(2));
     
     /**
      * Calculates: e<sup>x</sup>
@@ -165,7 +173,7 @@ public enum Float32 {
      */
     public static final float exp(float x)
     {
-      return exp2(x * oneOverLog2);
+      return exp2(x * ONE_OVER_LOG_2);
     }
     
     /**
@@ -205,29 +213,24 @@ public enum Float32 {
       } while(true);
     }
     
-    // Hastings style
-    private static final float sqrtOf2f = (float)Math.sqrt(2);
     
-    // TODO: change to precalculated exact constant
-    private static final float logOf2 = (float)Math.log(2);
     
     /**
      * Calculates: Log x
      */
     public static final float log(float x)
     {
-      return log2(x) * logOf2;
+      return log2(x) * LOG_2;
     }
     
-    // Log[2]/Log[10]
-    private static final float log10Convert = 0x1.344136p-2f;
+
     
     /**
      * Calculates: Log<sub>10</sub> x
      */
     public static final float log10(float x)
     {
-      return log2(x) * log10Convert;
+      return log2(x) * LOG_2_OVER_LOG_10;
     }
     
     /**
