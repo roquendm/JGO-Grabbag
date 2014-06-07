@@ -185,7 +185,7 @@ public class AliasMethod extends DiscreteMethod
     
     // Deviation from Vose here.  Generate two 
     // uniforms instead of one.
-    int   i = rng.nextInt(alias.length);
+    int   i = rng.nextIntFast(alias.length);
     float p = rng.nextFloat(); 
     return p <= prob[i] ? i : alias[i];
   }

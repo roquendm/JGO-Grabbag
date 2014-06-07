@@ -143,7 +143,7 @@ public class AliasMethodFixedPoint extends DiscreteMethod
   @Override
   public int nextInt(PRNG rng)
   { 
-    int v = rng.nextInt(size);
+    int v = rng.nextIntFast(size);
     int i = v+v;
     int p = rng.nextInt()>>>1;           // see 'bias' above
     return p <= data[i] ? v : data[i+1]; // see 'bias' above

@@ -62,12 +62,15 @@ public abstract class PRNG implements roquen.math.seq.IntegerSequence, roquen.ma
   /** Maps a 32-bit integer to [-1,1] single. */
   public static final float mapToPMO(int n)
   {
+    // TODO: What about not shifting and allowing
+    // the rounding to handle? Bias issues? Think
     return ((n >> 8)+0.5f) * 0x1.000002p-23f;
   }
 
   /** Maps a 64-bit integer to [-1,1] double. */
   public static final double mapToPMO(long n)
   {
+    // TODO: see mapToPMO(float)
     return ((n >> 12)+0.5)*0x1.0000000000001p-51;
   }
   
@@ -95,7 +98,7 @@ public abstract class PRNG implements roquen.math.seq.IntegerSequence, roquen.ma
    * <p>
    * Range 'n' legal on [0, 0x8000].
     */
-  public final int nextInt(int n)
+  public final int nextIntFast(int n)
   {
     // not quite uniform..you shouldn't care.
     // If you're really paranoid change to a
@@ -103,8 +106,11 @@ public abstract class PRNG implements roquen.math.seq.IntegerSequence, roquen.ma
     return ((nextInt()>>>15) * n) >>> 17;
   }
 
-  /** Returns a uniform integer on [0, n). */
-  public final int nextIntBig(int n)
+  /** 
+   * Returns a uniform integer on [0, n).
+   * @see #nextIntFast(int)
+   */
+  public final int nextInt(int n)
   {
     // See notes in nextInt. This is 
     // (on average) a better choice for
@@ -245,6 +251,7 @@ public abstract class PRNG implements roquen.math.seq.IntegerSequence, roquen.ma
   {
     return Integer.numberOfLeadingZeros(nextInt());
   }
+
   
   /**
    * Geometric distribution with p = 1/2.  Result on [0,64]

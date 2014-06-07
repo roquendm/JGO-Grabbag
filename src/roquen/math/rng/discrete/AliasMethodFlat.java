@@ -137,7 +137,7 @@ public class AliasMethodFlat extends DiscreteMethod
   @Override
   public int nextInt(PRNG rng)
   { 
-    int   v = rng.nextInt(size);
+    int   v = rng.nextIntFast(size);
     int   i = v+v;
     float p = rng.nextFloat(); 
     return p <= data[i] ? v : (int)data[i+1];

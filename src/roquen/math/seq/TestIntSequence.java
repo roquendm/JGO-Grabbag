@@ -32,11 +32,11 @@ public enum TestIntSequence
     
     if (update) {
       for(int i=0; i<e; i++)
-        data[i] += rng.nextInt(d) + min;
+        data[i] += rng.nextIntFast(d) + min;
     }
     else {
       for(int i=0; i<e; i++)
-        data[i] = rng.nextInt(d) + min + i;
+        data[i] = rng.nextIntFast(d) + min + i;
     }
   }
   
@@ -137,7 +137,7 @@ public enum TestIntSequence
     for(int i=0; i<e; i++) {
       float p = rng.nextFloat();
       if (p < prob) {
-        int b = 1+rng.nextInt(dist)+i;
+        int b = 1+rng.nextIntFast(dist)+i;
         if (b < e)
           swapL(data, i, b);
       }
@@ -175,8 +175,8 @@ public enum TestIntSequence
     
     for(int i=0; i<n; i++) {
       // don't worry about repeats or self swaps
-      int a = rng.nextInt(e);
-      int b = rng.nextInt(e);
+      int a = rng.nextIntFast(e);
+      int b = rng.nextIntFast(e);
       swapL(data, a, b);
     }
   }

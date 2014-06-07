@@ -22,6 +22,8 @@ public enum Float32 {
   
   public static final float ONE_OVER_LOG_2 = (float)(1.0/Math.log(2));
   public static final float LOG_2 = (float)Math.log(2);
+  
+  /** log(2)/log(10) */
   public static final float LOG_2_OVER_LOG_10 = 0x1.344136p-2f;
  
   public static final float SQRT_2 = (float)Math.sqrt(2);
