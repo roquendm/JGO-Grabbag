@@ -43,12 +43,13 @@ public final class XorWow64 extends PRNG64
   }
 
   @Override
-  public void setSeed(long seed) {
+  public final void setSeed(long seed)
+  {
     data = seed | 1;
     weyl = 0x5db3d743 ^ (seed & 1);
   }
 
-  public void setSeed(long data1, long data2)
+  public final void setSeed(long data1, long data2)
   {
     if (data1 == 0) data1 = Long.MIN_VALUE;
     data = data1;
@@ -56,9 +57,9 @@ public final class XorWow64 extends PRNG64
   }
   
   @Override
-  public long getSeed() {
+  public final long getSeed() {
     return data;
   }
   
-  long getSeed2() { return weyl; }
+  public final long getSeed2() { return weyl; }
 }

@@ -12,4 +12,5 @@ public enum Float64
   {
     return Double.doubleToRawLongBits(0.0+x);
   }
+ 
 }
