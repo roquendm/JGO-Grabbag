@@ -42,12 +42,12 @@ public final class XorPlus128 extends PRNG64
   @Override
   public final long nextLong()
   {
-    long s1 = data1;
-    long s0 = data0;
+    long s1 = data0;
+    long s0 = data1;
     
     data0  = s0;
     s1    ^= s1 << 23;
-    data1  = (s1 ^ s0 ^ (s1 >> 17) ^ (s0 >> 26)) + s0;
+    data1  = (s1 ^ s0 ^ (s1 >>> 17) ^ (s0 >>> 26)) + s0;
    
     return data1;
   }
