@@ -60,7 +60,7 @@ public final class XorPlus128 extends PRNG64
   
   public final void setSeed(long seed0, long seed1) 
   {
-    if (seed0 == 0) seed0 = Long.MIN_VALUE;
+    if ((seed0|seed1) == 0) seed0 = 0x61C8864680b583EBL;
     data0 = seed0;
     data1 = seed1;
   }
