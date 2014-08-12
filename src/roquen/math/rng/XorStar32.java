@@ -61,7 +61,7 @@ public final class XorStar32 extends PRNG32
   {
     data ^= (data <<  13);
     data ^= (data >>> 17);
-    data ^= (data <<   5);
+    data ^= (data <<  15);
     return data * 1597334677;
    //return data * 741103597;
   }

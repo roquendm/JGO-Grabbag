@@ -1,7 +1,7 @@
 package roquen.math.rng;
 
 // Implementation notes:
-// SmallCrush failures [13,17,5]:
+// SmallCrush failures [13,17,15]:
 //    1  BirthdaySpacings    eps  
 //    2  Collision           1 - eps1
 //    6  MaxOft              6.7e-16
@@ -61,7 +61,7 @@ public final class XorShift32 extends PRNG32
   {
     data ^= (data <<  13);
     data ^= (data >>> 17);
-    data ^= (data <<   5);
+    data ^= (data <<  15);
     return data;
   }
 }

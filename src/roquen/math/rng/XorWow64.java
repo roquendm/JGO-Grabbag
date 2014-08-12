@@ -51,7 +51,7 @@ public final class XorWow64 extends PRNG64
 
   public final void setSeed(long data1, long data2)
   {
-    if (data1 == 0) data1 = Long.MIN_VALUE;
+    if (data1 == 0) data1 = WEYL;
     data = data1;
     weyl = data2;
   }

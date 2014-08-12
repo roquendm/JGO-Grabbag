@@ -72,7 +72,7 @@ public final class XorWow32 extends PRNG32
   {
     data ^= (data <<  13);
     data ^= (data >>> 17);
-    data ^= (data <<   5);
+    data ^= (data <<  15);
     weyl += WEYL;
     
     // NOTE: Other mixes are possible, such as an xor
