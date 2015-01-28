@@ -16,17 +16,17 @@ public enum Float32 {
   // TODO: these should be change to pre-computed correctly
   // rounded hex constants.
   
-  public static final float PI        = (float)(Math.PI);
-  public static final float PI_OVER_2 = (float)(Math.PI/2);
-  public static final float PI_OVER_4 = (float)(Math.PI/4);
+  public static final float PI        = 0x3.243f6cp0f; // (float)(Math.PI);
+  public static final float PI_OVER_2 = 0x1.921fb6p0f; // (float)(Math.PI/2);
+  public static final float PI_OVER_4 = 0xc.90fdbp-4f; // (float)(Math.PI/4);
   
-  public static final float ONE_OVER_LOG_2 = (float)(1.0/Math.log(2));
-  public static final float LOG_2 = (float)Math.log(2);
+  public static final float ONE_OVER_LOG_2 = 0x1.715476p0f; // (float)(1.0/Math.log(2));
+  public static final float LOG_2 = 0xb.17218p-4f; // (float)Math.log(2);
   
   /** log(2)/log(10) */
   public static final float LOG_2_OVER_LOG_10 = 0x1.344136p-2f;
  
-  public static final float SQRT_2 = (float)Math.sqrt(2);
+  public static final float SQRT_2 = 0x1.6a09e6p0f; //(float)Math.sqrt(2);
   
 
   /** Return 'x' multiplied by the sign of 'y'. */
