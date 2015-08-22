@@ -13,4 +13,9 @@ public class Vect3f {
   {
     return hashComplete(hashAdd(HASH,x,y,z));
   }
+  
+  public final float dot(Vect3f v)
+  {
+    return x*v.x + y*v.y + z*v.z;
+  }
 }
