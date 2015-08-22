@@ -6,6 +6,7 @@ public abstract class Noise
   public static final int pseudoFloor(float x)
   {
     //return (int)x;
+    //int ix = (int)x-1.f; return ix - (ix>>31);
     return x >= 0 ? (int)x : (int)x-1;
   }
 

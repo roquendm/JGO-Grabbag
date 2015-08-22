@@ -407,7 +407,7 @@ public class C2D
   }
   
   
-  @SuppressWarnings("hiding")
+  @SuppressWarnings({ "hiding", "static-method" })
   public C2D c2d(float x, float y)
   {
     return new C2D(x,y);

@@ -47,6 +47,7 @@ public enum Dissembler
     
     
     // T {0=32 bit, 1=64+coop, 2=64}
+    @SuppressWarnings("unused")
     int t = ((Unsafe.ARRAY_OBJECT_INDEX_SCALE+Unsafe.ADDRESS_SIZE) >> 2)-2;
     
     // on 64-bit we expect all array headers to be 24/16 (for coop)

@@ -12,6 +12,61 @@ package roquen.math;
 public enum Float32 {
   
   ;
+  
+  public static final float abs(float a)
+  {
+    // return (a >= 0) ? a : -a;
+    
+    // movd  r10d, xmm0
+    // and   r10d, 0x7fffffff
+    // movd  xmm0, r10d
+    // return Float.intBitsToFloat((Float.floatToRawIntBits(a)<<1)>>>1);
+    
+    return Float.intBitsToFloat((Float.floatToRawIntBits(a) & (-1>>>1)));
+  }
+  
+  /**
+   * No special casing for NaNs and -0
+   */
+  public static final float min(float a, float b)
+  {
+    return (a <= b) ? a : b;
+  }
+  
+  /**
+   * No special casing -0
+   */
+  public static final float minNum(float a, float b)
+  {
+    if (b >= a) return a;      // a <= b and neither are NaN 
+    if (b == b) return b;      // b isn't NaN
+    return a;
+  }
+  
+  /**
+   * No special casing for NaNs and -0
+   */
+  public static final float max(float a, float b)
+  {
+    return (a >= b) ? a : b;    
+  }
+  
+  /**
+   * No special casing -0
+   */
+  public static final float maxNum(float a, float b)
+  {
+    if (a <= b) return b;      // b >= a and neither are NaN
+    if (a == a) return a;      // a isn't NaN
+    return b;
+  }
+  
+  /** returns <i>true</i> if |d| <= epsilon.  If d is NaN will return false. */
+  public final static boolean epsilonEquals(float d, float epsilon)
+  {
+    // if 'd' is NaN, returns false
+    return Math.abs(d) <= epsilon;
+  }
 
   // TODO: these should be change to pre-computed correctly
   // rounded hex constants.
@@ -67,6 +122,18 @@ public enum Float32 {
     // xor the sign of reduced range with the input for final result..
     // again all of this could probably be cleaned up with some thought.
     return mulsign(r, xy);
+  }
+  
+  /** 
+   * atan(y,x), where y >=0 and x >=0.
+   * <p>
+   * */
+  // blah
+  public static final float atanpp(float y, float x)
+  {
+    if (x <= y) return atan_5(y/x);
+    
+    return PI_OVER_2 - atan_5(x/y);
   }
 
     /**
@@ -256,6 +323,46 @@ public enum Float32 {
     {
       return 1<<x;
     }
+    
+    // HotSpot doesn't give access to various SIMD opcode sets
+    // rsqrt approximations.
+    
+    /** 
+     * Approximate <tt>1/sqrt(x)</tt> from initial guess <tt>g</tt> using
+     * 1 step of Newton's method.
+     */
+    public static final float rsqrt_1(float x, float g)
+    {
+      float hx = x * 0.5f;
+      g  = g*(1.5f-hx*g*g);    
+      return g;
+    }
+    
+    /** 
+     * Approximate <tt>1/sqrt(x)</tt> from initial guess <tt>g</tt> using
+     * 2 steps of Newton's method.
+     */
+    public static final float rsqrt_2(float x, float g)
+    {
+      float hx = x * 0.5f;
+      g  = g*(1.5f-hx*g*g);
+      g  = g*(1.5f-hx*g*g);
+      return g;
+    }
+    
+    /** 
+     * Approximate <tt>1/sqrt(x)</tt> from initial guess <tt>g</tt> using
+     * 3 step of Newton's method.
+     */
+    public static final float rsqrt_3(float x, float g)
+    {
+      float hx = x * 0.5f;
+      g  = g*(1.5f-hx*g*g);
+      g  = g*(1.5f-hx*g*g);
+      g  = g*(1.5f-hx*g*g);
+      return g;
+    }
+    
     
     /**
      * Calculates: 2<sup>x</sup> for inputs on [-30, 0].

@@ -7,6 +7,8 @@ import roquen.fake.Vect2i;
  */
 public enum Morton2D {
   ;
+  
+  
 
   /** bit positions of scattered X */
   protected static final int MASK_X = 0x55555555;
@@ -54,12 +56,12 @@ public enum Morton2D {
 
     int my = MASK_Y;
     int mx = my >>> 1;    // MASK_X
-  int x  = code | my;   // set bits for carry
-  int y  = code & my;   // isolate Y
+    int x  = code | my;   // set bits for carry
+    int y  = code & my;   // isolate Y
 
-  x += 1; x &= mx;      // add and isolate
+    x += 1; x &= mx;      // add and isolate
 
-  return x|y;           // rebuild code
+    return x|y;           // rebuild code
   }
 
   /** Decrease the represented X coordinate by one. */
@@ -192,6 +194,16 @@ public enum Morton2D {
     y = y >>> 24;
     return x|y;    
   }
+  
+  /**
+   * 
+   */
+  public static void decode4(Vect2i p, int code)
+  {
+    int i = code+code;
+    p.x = ((0xee44ee44 >> i) & 3);
+    p.y = ((0xfafa5050 >> i) & 3);
+  }
 
   /** 
    *
@@ -278,5 +290,28 @@ public enum Morton2D {
     x &= 0x0000ffff; y &= 0x0000ffff;
     v.x = x;
     v.y = y;
+  }
+  
+  @SuppressWarnings("boxing")
+  public static void main(String[] args)
+  {
+    Vect2i p = new Vect2i();
+    
+    int px = 0;
+    int py = 0;
+    
+    for(int i=0; i<16; i++) {
+      int e = encode4(i&3,(i>>2)&3);
+      px |= (i&3) << (e+e);
+      py |= ((i>>2)&3) << (e+e);
+      //System.out.printf("{%d,%d},",p.x,p.y);
+    }
+     
+    System.out.printf("%s,%s\n",Integer.toBinaryString(px),Integer.toBinaryString(py));
+    
+    for(int i=0; i<16; i++) {
+      decode4(p,i);
+      System.out.printf("{%d,%d},",p.x,p.y);
+    }
   }
 }

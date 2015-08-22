@@ -14,6 +14,7 @@ public enum TestDist {
   public static int oneInMask(PRNG rng, int bits)
   {
     int len = Integer.bitCount(bits);
+    @SuppressWarnings("unused")
     int val = rng.nextIntFast(len);
     
     

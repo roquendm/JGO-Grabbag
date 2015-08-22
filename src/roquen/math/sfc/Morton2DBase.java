@@ -6,6 +6,10 @@ import roquen.fake.Vect2i;
 /** implements manipulations of scattered coordinates */
 abstract class Morton2DBase<T extends Morton2DBase<T>> extends Index2D<T>
 {
+  // probably would make sense to modify to prefer faster updates than
+  // get operations.  scattered x,y in same bit positions and do the
+  // shift for combine in get.
+  
   @Override
   public void set(T v)
   {
