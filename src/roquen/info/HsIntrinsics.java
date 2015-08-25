@@ -2,22 +2,14 @@ package roquen.info;
 
 import roquen.math.Float32;
 
-// java -cp bin -XX:+UnlockDiagnosticVMOptions -XX:-Inline -XX:+TraceClassLoading -XX:+LogCompilation -XX:+PrintAssembly roquen.info.HsIntrinsics
+// java -cp bin -XX:+UnlockDiagnosticVMOptions -XX:+TraceClassLoading -XX:+LogCompilation -XX:+PrintAssembly roquen.info.HsIntrinsics
 public class HsIntrinsics 
 {
   private static roquen.math.rng.XorStar64 rng = new roquen.math.rng.XorStar64();
-  
-  public static void spDivision(float[] d, float[] s)
-  {
-    int len = d.length;
-    int si  = 0;
-    
-    for(int i=0; i<len; i++) {
-      d[i] = s[si++]/s[si++];
-    }
-  }
-  
-  public static void spMulInvertF(float[] d, float[] s)
+ 
+ 
+  // 1.8.0 (60) - performs division (reasonable)
+  public static void spMulInvert(float[] d, float[] s)
   {
     int len = d.length;
     
@@ -26,7 +18,10 @@ public class HsIntrinsics
     }
   }
   
-  // 1.8.0 (60) - converts to double, calls method & convert to single
+  // 1.8.0 (60) - SSE converts to double, stores to memory,
+  // load into x87, op, and back.
+  //---
+  // 
   public static void spSin(float[] d, float[] s)
   {
     int len = d.length;
@@ -36,60 +31,17 @@ public class HsIntrinsics
     }
   }
   
-  public static float copySign(float r, float s)
-  {
-    int is = Float.floatToRawIntBits(r) >> 31;
-    int ir = Float.floatToRawIntBits(r) << 1;
-    int ix = is >>> 1;
-
-    ir ^= is;
-    ir  = (ir >>> 1) ^ ix;
-    
-    return Float.intBitsToFloat(ir);
-  }
-  
-  public static void spCopySign(float[] d, float[] s)
-  {
-    int len = d.length;
-    
-    for(int i=0; i<len; i++) {
-      d[i] = Math.copySign(d[i],s[i]);
-    }
-  }
-  
-  public static final float rsqrt_cl(float x)
-  {
-    int   i = 0x5f375a86 - (Float.floatToRawIntBits(x) >>> 1);
-    float g = Float.intBitsToFloat(i);
-    float h = 0.5f * x;
-    g  = g*(1.5f-h*g*g);    
-    return g;
-  }
-  
-  public static final float rsqrt_cl2(float x)
-  {
-    int   i = 0x5f375a86 - (Float.floatToRawIntBits(x) >>> 1);
-    float g = Float.intBitsToFloat(i);
-    float h = 0.5f*g;
-    g  = h*(3.f-x*g*g);    
-    return g;
-  }
-  
-  public static final float rsqrt_1(float x, float g)
-  {
-    float hx = x * 0.5f;
-    g  = g*(1.5f-hx*g*g);    
-    return g;
-  }
-  
+  // becomes a move, likewise for reverse
   public static void spRawBits(float[] d, float[] s)
   {
     int len = d.length;
     
     for(int i=0; i<len; i++) {
-      d[i] = rsqrt_cl2(s[i]);
+      d[i] = Float.floatToRawIntBits(s[i]);
     }
   }
+  
+  // Single precision functions (including casting result) from Math
   
   public static void spLocalAbs(float[] d, float[] s)
   {
@@ -110,6 +62,54 @@ public class HsIntrinsics
     }
   }
   
+  // 1.8.0 (60) -
+  //  movd r11d, xmm1
+  //  movd r10d, xmm0
+  //  and  r11d, 0x7fffffff
+  //  and  r10d, 0x80000000
+  //  or   r10d, r11d
+  //  movd xmm0, r10d
+  public static void spCopySign(float[] d, float[] s)
+  {
+    int len = d.length;
+    for(int i=0; i<len; i++) { d[i] = Math.copySign(d[i],s[i]); }
+  }
+  
+  // branching as per java-source
+  public static void spAbs(float[] d, float[] s)
+  {
+    int len = d.length;
+    for(int i=0; i<len; i++) { d[i] = Math.abs(s[i]); }
+  }
+  
+  // converts to double..and standardish mess from there
+  public static void spFloor(float[] d, float[] s)
+  {
+    int len = d.length;
+    for(int i=0; i<len; i++) { d[i] = (float)Math.floor(s[i]); }
+  }
+  
+  // converts to double..and standardish mess from there
+  public static void spCeiling(float[] d, float[] s)
+  {
+    int len = d.length;
+    for(int i=0; i<len; i++) { d[i] = (float)Math.ceil(s[i]); }
+  }
+  
+  // perfectly sane
+  public static void spGetExp(int[] d, float[] s)
+  {
+    int len = d.length;
+    for(int i=0; i<len; i++) { d[i] = Math.getExponent(s[i]); }
+  }
+  
+  // transformed to: sqrtss
+  public static void spSqrt(float[] d, float[] s)
+  {
+    int len = d.length;
+    for(int i=0; i<len; i++) { d[i] = (float)Math.sqrt(s[i]); }
+  }
+  
   private static final int SIZE = 1<<24;
   
   
@@ -117,19 +117,22 @@ public class HsIntrinsics
   {
     float[] d = new float[SIZE];
     float[] s = new float[2*SIZE];
+    int[]   di = new int[SIZE];
     
     for(int i=0; i<2*SIZE; i++) {
       s[i] = 100.f*(rng.nextFloat()+1.f);
     }
     
     for(int i=0; i<10; i++) {
-      //spDivision(d,s);
-      //spMulInvertF(d,s);
-      //spCopySign(d,s);
-      spLocalMin(d,s);
-      
+      spMulInvert(d,s);
+      spCopySign(d,s);
+      //spLocalMin(d,s);
+      spSin(d,s);
+      spFloor(d,s);
+      spCeiling(d,s);
+      spGetExp(di,s);
+      spSqrt(d,s);
     }
-    
   }
   
   
