@@ -31,6 +31,19 @@ public class HsIntrinsics
     }
   }
   
+  // 1.8.0 (60) - does not fold, explicit individual calls to fsin & fcos
+  // moving the parameter each time from SSE->Memory->x87.
+  public static void spSinCos(float[] d, float[] s)
+  {
+    int len = d.length>>1;
+    int di  = 0;
+    
+    for(int i=0; i<len; i++) {
+      d[di++] = (float)Math.sin(s[i]);
+      d[di++] = (float)Math.cos(s[i]);
+    }
+  }
+  
   // 1.8.0 (60) - moving back and forth between SSE and x87 via memory - ouch
   //---
   // 
@@ -140,6 +153,7 @@ public class HsIntrinsics
       spCopySign(d,s);
       //spLocalMin(d,s);
       spSin(d,s);
+      spSinCos(d,s);
       spFloor(d,s);
       spCeiling(d,s);
       spGetExp(di,s);
