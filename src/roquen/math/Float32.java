@@ -324,8 +324,27 @@ public enum Float32 {
       return 1<<x;
     }
     
+    /**
+     * Calculates: 2<sup>x</sup> for inputs on [-30, 0].
+     * <p>
+     * The result is exact for valid input values,
+     * otherwise the result is undefined.
+     */
+    public static final float exp2ns(int x)
+    {
+      return 0x1.p-30f * (1<<(30+x));
+    }
+    
     // HotSpot doesn't give access to various SIMD opcode sets
     // rsqrt approximations.
+    
+    /** Make an initial guess for 1/sqrt(x) using Chris Lomont's "magic" number */
+    public static final float rsqrtGuess(float x)
+    {
+      int   i = 0x5f375a86 - (Float.floatToRawIntBits(x) >>> 1);
+      float g = Float.intBitsToFloat(i);
+      return g;
+    }
     
     /** 
      * Approximate <tt>1/sqrt(x)</tt> from initial guess <tt>g</tt> using
@@ -363,17 +382,6 @@ public enum Float32 {
       return g;
     }
     
-    
-    /**
-     * Calculates: 2<sup>x</sup> for inputs on [-30, 0].
-     * <p>
-     * The result is exact for valid input values,
-     * otherwise the result is undefined.
-     */
-    public static final float exp2ns(int x)
-    {
-      return 0x1.p-30f * (1<<(30+x));
-    }
     
     /**
      * Returns the IEEE complaint bit format, converting any negative zero to zero.
