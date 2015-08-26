@@ -8,7 +8,7 @@ public class HsIntrinsics
   private static roquen.math.rng.XorStar64 rng = new roquen.math.rng.XorStar64();
  
  
-  // 1.8.0 (60) - performs division (reasonable)
+  // 1.8.0 (60) - performs the division (reasonable)
   public static void spMulInvert(float[] d, float[] s)
   {
     int len = d.length;
@@ -28,6 +28,18 @@ public class HsIntrinsics
     
     for(int i=0; i<len; i++) {
       d[i] = (float)Math.sin(s[i]);
+    }
+  }
+  
+  // 1.8.0 (60) - moving back and forth between SSE and x87 via memory - ouch
+  //---
+  // 
+  public static void spMultiX87(float[] d, float[] s)
+  {
+    int len = d.length;
+    
+    for(int i=0; i<len; i++) {
+      d[i] = (float)(Math.cos((Math.PI/2.0)*Math.sin(s[i])));
     }
   }
   
@@ -132,6 +144,7 @@ public class HsIntrinsics
       spCeiling(d,s);
       spGetExp(di,s);
       spSqrt(d,s);
+      spMultiX87(d,s);
     }
   }
   
