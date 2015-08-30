@@ -4,6 +4,13 @@ public enum Float64
 {
   ;
   
+  /** Same contract as {@link java.lang.Math#abs(double)}. */
+  public static final double abs(double a)
+  {
+    // in fact: this is the implementation in the documentation.
+    return Double.longBitsToDouble((Double.doubleToRawLongBits(a)<<1)>>>1);
+  }
+  
   /**
    * @see Float32#min(float,float)
    */
