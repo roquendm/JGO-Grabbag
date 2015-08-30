@@ -135,7 +135,7 @@ public class HsIntrinsics
     for(int i=0; i<len; i++) { d[i] = (float)Math.sqrt(s[i]); }
   }
   
-  private static final int SIZE = 1<<24;
+  private static final int SIZE = 1<<20;
   
   
   public static void spBinaryOpDriver()
@@ -163,9 +163,32 @@ public class HsIntrinsics
   }
   
   
+  // branching as per java-source
+  public static void dpAbs(double[] d, double[] s)
+  {
+    int len = d.length;
+    for(int i=0; i<len; i++) { d[i] = Math.abs(s[i]); }
+  }
+  
+  
+  public static void dpBinaryOpDriver()
+  {
+    double[] d = new double[SIZE];
+    double[] s = new double[2*SIZE];
+    
+    for(int i=0; i<2*SIZE; i++) {
+      s[i] = 100.f*(rng.nextDouble()+1.f);
+    }
+    
+    for(int i=0; i<10; i++) {
+      dpAbs(d, s);
+    }
+  }
+  
   public static void main(String[] args)
   {
     spBinaryOpDriver();
+    dpBinaryOpDriver();
   }
   
   
