@@ -5,27 +5,27 @@ import roquen.math.Float32;
 public enum FloatError32
 {
   ;
-  
-  /** 
-   * Given 64 uniformly distributed bits 'bit' returns
-   * a double uniformly distributed on [-{@link Double#MAX_VALUE}, {@link Double#MAX_VALUE}]
+
+  /**
+   * Given 32 uniformly distributed bits 'bit' returns
+   * a double uniformly distributed on [-{@link Float#MAX_VALUE}, {@link Float#MAX_VALUE}]
    */
   public static final float finiteDomain(int bits)
   {
     bits &= 0xBFFFFFFF;
     return Float.intBitsToFloat(bits);
   }
-  
-  /** 
-   * Given 64 uniformly distributed bits 'bit' returns
-   * a double uniformly distributed on [0, {@link Double#MAX_VALUE}]
+
+  /**
+   * Given 32 uniformly distributed bits 'bit' returns
+   * a double uniformly distributed on [0, {@link Float#MAX_VALUE}]
    */
   public static final float positiveFiniteDomain(int bits)
   {
     bits >>>= 2;
     return Float.intBitsToFloat(bits);
   }
-  
+
   /**
    * Returns the approximate number of ulp's that returned result 'r'
    * is with respect to expected result 'e'
@@ -37,7 +37,7 @@ public enum FloatError32
     // ignores the rounding produced by the subtraction
     return Float32.abs(e-r)/Math.ulp(e);
   }
-  
+
   /**
    * Checks if a returns result 'r' is with 'n' ulp of the expected 'e'
    * <p>
@@ -48,19 +48,30 @@ public enum FloatError32
     // ignores the rounding produced by the subtraction
      return Float32.abs(e-r) <= n*Math.ulp(e);
   }
-  
-  // complete
-  private static int significantBits(float e, float r)
+
+  /** Returns <tt>sqrt(a<sup>2</sup>+b<sup>2</sup>)</tt> without overflow or underflow. */
+  public static final strictfp float pythagoreanSum(float a, float b)
   {
-    int ie = Float.floatToRawIntBits(e);
-    int ir = Float.floatToRawIntBits(r);
-    int t  = ie ^ ir;
-    
-    if (t > 0) {
-      //
-    } else if (t == 0) return 24;
-    
-    
-    return 0;
+    double da = a;
+    double db = b;
+    return (float)Math.sqrt(da*da + db*db);
+  }
+
+  /**
+   *  Returns <tt>sqrt(sum(a[i]<sup>2</sup>)</tt> without intermediate overflow or underflow.
+   *  <p>
+   *  Explodes if: <tt>a.length < 2</tt>
+   */
+  public static final float pythagoreanSum(float[] a)
+  {
+    double da = a[0];
+    double db = a[1];
+    double s  = Math.sqrt(da*da + db*db);
+    int    e  = a.length;
+
+    for(int i=2; i<e; i++)
+      s = Math.sqrt(s*s+a[i]*a[i]);
+
+    return (float)s;
   }
 }
