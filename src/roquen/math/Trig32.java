@@ -1,5 +1,8 @@
 package roquen.math;
 
+/**
+ *
+ */
 public enum Trig32
 {
   ;
