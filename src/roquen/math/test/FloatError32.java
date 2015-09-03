@@ -38,15 +38,38 @@ public enum FloatError32
     return Float32.abs(e-r)/Math.ulp(e);
   }
 
+  // 2^-24 + ulp(2^24)
+  private static final float ULP_0 = 0x1.000002p-24f;
+
+  /**
+   * Returns the size of the ulp in 'f' if |f| >= 2^-101
+   */
+  public static strictfp float approxUlp(float f)
+  {
+    return (f+f*ULP_0)-f;
+  }
+
+
   /**
    * Checks if a returns result 'r' is with 'n' ulp of the expected 'e'
    * <p>
    * <tt>abs(e-r) <= ulp(e)</tt>
    */
-  public static boolean withULP(float e, float r, float n)
+  public static boolean withinULP(float e, float r, float n)
   {
     // ignores the rounding produced by the subtraction
      return Float32.abs(e-r) <= n*Math.ulp(e);
+  }
+
+  /**
+   * Checks if a returns result 'r' is with 'n' ulp of the expected 'e'
+   * <p>
+   * <tt>abs(e-r) <= {@link #approxUlp(float) approxUlp(e)}</tt>
+   */
+  public static boolean withinApproxULP(float e, float r, float n)
+  {
+    // ignores the rounding produced by the subtraction
+     return Float32.abs(e-r) <= n*approxUlp(e);
   }
 
   /** Returns <tt>sqrt(a<sup>2</sup>+b<sup>2</sup>)</tt> without overflow or underflow. */
