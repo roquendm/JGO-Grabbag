@@ -39,9 +39,9 @@ public enum FloatError64
   }
 
   /**
-   * Checks if a returns result 'r' is with 'n' ulp of the expected 'e'
+   * Checks if a returned result 'r' is with 'n' ulp of the expected 'e'
    * <p>
-   * <tt>abs(e-r) <= ulp(e)</tt>
+   * <tt>abs(e-r) <= n*ulp(e)</tt>
    */
   public static final boolean withinULP(double e, double r, double n)
   {
@@ -53,7 +53,8 @@ public enum FloatError64
   private static final double ULP_0 = 0x1.0000000000001p-53;
 
   /**
-   * Returns the size of the ulp in 'f' if |f| >= 2^-969
+   * Returns the size of the ulp in 'f' if |f| >= 2<sup>-969</sup>,
+   * otherwise returns zero.
    */
   public static strictfp double approxUlp(double f)
   {
@@ -63,7 +64,9 @@ public enum FloatError64
   /**
    * Checks if a returns result 'r' is with 'n' ulp of the expected 'e'.
    * <p>
-   * <tt>abs(e-r) <= {@link #approxUlp(double) approxUlp(e)}</tt>
+   * <tt>abs(e-r) <= n*{@link #approxUlp(double) approxUlp(e)}</tt>
+   * <p>
+   * NOTE: approxUlp returns zero for small 'e'
    */
   public static boolean withinApproxULP(double e, double r, double n)
   {

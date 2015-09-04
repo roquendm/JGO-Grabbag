@@ -8,7 +8,7 @@ public enum FloatError32
 
   /**
    * Given 32 uniformly distributed bits 'bit' returns
-   * a double uniformly distributed on [-{@link Float#MAX_VALUE}, {@link Float#MAX_VALUE}]
+   * a float uniformly distributed on [-{@link Float#MAX_VALUE}, {@link Float#MAX_VALUE}]
    */
   public static final float finiteDomain(int bits)
   {
@@ -18,7 +18,7 @@ public enum FloatError32
 
   /**
    * Given 32 uniformly distributed bits 'bit' returns
-   * a double uniformly distributed on [0, {@link Float#MAX_VALUE}]
+   * a float uniformly distributed on [0, {@link Float#MAX_VALUE}]
    */
   public static final float positiveFiniteDomain(int bits)
   {
@@ -42,7 +42,8 @@ public enum FloatError32
   private static final float ULP_0 = 0x1.000002p-24f;
 
   /**
-   * Returns the size of the ulp in 'f' if |f| >= 2^-101
+   * Returns the size of the ulp in 'f' if |f| >= 2<sup>-101</sup>.
+   * Otherwise returns zero.
    */
   public static strictfp float approxUlp(float f)
   {
@@ -51,9 +52,9 @@ public enum FloatError32
 
 
   /**
-   * Checks if a returns result 'r' is with 'n' ulp of the expected 'e'
+   * Checks if a returned result 'r' is with 'n' ulp of the expected 'e'
    * <p>
-   * <tt>abs(e-r) <= ulp(e)</tt>
+   * <tt>abs(e-r) <= n*ulp(e)</tt>
    */
   public static boolean withinULP(float e, float r, float n)
   {
@@ -62,9 +63,11 @@ public enum FloatError32
   }
 
   /**
-   * Checks if a returns result 'r' is with 'n' ulp of the expected 'e'
+   * Checks if a returned result 'r' is with 'n' ulp of the expected 'e'
    * <p>
-   * <tt>abs(e-r) <= {@link #approxUlp(float) approxUlp(e)}</tt>
+   * <tt>abs(e-r) <= n*{@link #approxUlp(float) approxUlp(e)}</tt>
+   * <p>
+   * NOTE: approxUlp returns zero for small 'e'
    */
   public static boolean withinApproxULP(float e, float r, float n)
   {
