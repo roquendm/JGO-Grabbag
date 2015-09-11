@@ -4,16 +4,20 @@ public enum Float64
 {
   ;
 
+  // SEE: Float32 implementations for potentially addition comments
+
+  static final long B_ONE = Double.doubleToRawLongBits(1.f);
+
   /** Same contract as {@link java.lang.Math#abs(double)}. */
   public static final double abs(double a)
   {
-    return Double.longBitsToDouble(Double.doubleToRawLongBits(a) & 0x80000000_00000000L);
+    return Double.longBitsToDouble((Double.doubleToRawLongBits(a)<<1)>>>1);
   }
 
   /**
    * Returns 'a' multiplied by the sign of 'b'.
    * <p>
-   * equivalent to: Math.copySign(1,b)*a
+   * equivalent to: {@linkplain java.lang.Math#copySign(double,double) copySign}(1,b)*a
    */
   public static final double mulSign(double a, double b)
   {
@@ -56,6 +60,25 @@ public enum Float64
     if (a <= b) return b;      // b >= a and neither are NaN
     if (a == a) return a;      // a isn't NaN
     return b;
+  }
+
+  /**
+   * <p>
+   * NEVER CALL ME
+   */
+  public static final double asin(double a)
+  {
+    // range reduction
+    long   ia = Double.doubleToRawLongBits(a);
+    long   aa = (ia<<1)>>>1;
+    long   sa = B_ONE | (ia^aa);
+    double d  = Double.longBitsToDouble(aa);
+    double m  = Double.longBitsToDouble(sa);
+
+    // atan(+,+);
+    d = Math.atan2(d, Math.sqrt((1.0+d)*(1.0-d)));
+
+    return m*d;
   }
 
   // HotSpot doesn't give access to various SIMD opcode sets

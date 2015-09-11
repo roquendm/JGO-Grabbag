@@ -7,29 +7,43 @@ public enum Trig64
 {
   ;
 
+  // SEE: the same Trig32 implementation for potentially more information
+
   /**
-   * Returns sin(a) given cos(a) and x on [-pi,pi].
+   * Reduces input angle on [0, 2pi] to equivalent value on [-pi,pi].
+   * <p>
+   * The reduction is exact.
+   */
+  public static final double reduceTwoPi(double a)
+  {
+    if (a <= Math.PI) return a;
+    return 2*Math.PI - a;
+  }
+
+
+  /**
+   * Returns sin(a) given cos(a) and a on [-pi,pi].
    * <p>
    * computed as: <tt>sign(sa) sqrt(1-cos<sup>2</sup>)</tt>
    */
-  public static final double sinPmPi(double cos, double a)
+  public static final double sinPmPi(double cos, double sa)
   {
-    long   sx = (Double.doubleToRawLongBits(a) >>> 63) << 63;
+    long   sx = (Double.doubleToRawLongBits(sa) >>> 63) << 63;
     double r  = Math.sqrt(1.0-cos*cos);
     long   ir = Double.doubleToRawLongBits(r) ^ sx;
     return  Double.longBitsToDouble(ir);
   }
 
   /**
-   * Returns sin(a) given cos(a) and x on [-pi,pi].
+   * Returns sin(a) given cos(a) and a on [-pi,pi].
    * <p>
    * computed as: <tt>sign(sa) sqrt((1-cos)(1+cos))</tt>
    * <p>
    * Result is within 1-ulp of correct
    */
-  public static final double sinPmPiHq(double cos, double a)
+  public static final double sinPmPiHq(double cos, double sa)
   {
-    long   sx = (Double.doubleToRawLongBits(a) >>> 63) << 63;
+    long   sx = (Double.doubleToRawLongBits(sa) >>> 63) << 63;
     double r  = Math.sqrt((1.0-cos)*(1.0+cos));
     long   ir = Double.doubleToRawLongBits(r) ^ sx;
     return  Double.longBitsToDouble(ir);

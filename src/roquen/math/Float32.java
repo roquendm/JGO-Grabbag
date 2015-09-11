@@ -13,28 +13,32 @@ public enum Float32 {
 
   ;
 
+  static final int B_ONE = Float.floatToRawIntBits(1.f);
+
+  /**
+   * Returns abs(a)
+   */
   public static final float abs(float a)
   {
-    // return (a >= 0) ? a : -a;
-
-    // movd  r10d, xmm0
-    // and   r10d, 0x7fffffff
-    // movd  xmm0, r10d
-    // return Float.intBitsToFloat((Float.floatToRawIntBits(a)<<1)>>>1);
-
     return Float.intBitsToFloat((Float.floatToRawIntBits(a) & (-1>>>1)));
   }
 
   /**
    * Returns 'a' multiplied by the sign of 'b'.
    * <p>
-   * equivalent to: Math.copySign(1,b)*a
+   * equivalent to: {@linkplain java.lang.Math#copySign(float,float) copySign}(1,b)*a
    */
   public static final float mulSign(float a, float b)
   {
     int sb = Float.floatToRawIntBits(b) & 0x7fffffff;
     int ia = Float.floatToRawIntBits(a) ^ sb;
     return   Float.intBitsToFloat(ia);
+  }
+
+  public static int roundToInt(float x)
+  {
+    // TODO:
+    return (int)(x + Math.copySign(0.5f,x));
   }
 
   /**
@@ -46,7 +50,10 @@ public enum Float32 {
   }
 
   /**
-   * No special casing -0
+   * Returns the smaller of 'a' and 'b'.
+   * <p>
+   * No special casing -0, only returns NaN if both
+   * inputs are NaN
    */
   public static final float minNum(float a, float b)
   {
@@ -64,7 +71,10 @@ public enum Float32 {
   }
 
   /**
-   * No special casing -0
+   * Returns the larger of 'a' and 'b'.
+   * <p>
+   * No special casing -0, only returns NaN if both
+   * inputs are NaN.
    */
   public static final float maxNum(float a, float b)
   {
@@ -77,7 +87,7 @@ public enum Float32 {
   public final static boolean epsilonEquals(float d, float epsilon)
   {
     // if 'd' is NaN, returns false
-    return Math.abs(d) <= epsilon;
+    return abs(d) <= epsilon;
   }
 
   // TODO: these should be change to pre-computed correctly
@@ -94,14 +104,6 @@ public enum Float32 {
   public static final float LOG_2_OVER_LOG_10 = 0x1.344136p-2f;
 
   public static final float SQRT_2 = 0x1.6a09e6p0f; //(float)Math.sqrt(2);
-
-
-  /** Return 'x' multiplied by the sign of 'y'. */
-  // copySign isn't yet an intrinsic, so this isn't a desirable function to call.
-  public static float mulsign(float x, float y) { return (Math.copySign(1, y) * x); }
-
-
-
 
   /**
    * arc tangent of x on [-1,1]
@@ -122,6 +124,7 @@ public enum Float32 {
   /** */
   public static final float atan(float y, float x)
   {
+    // TODO: reduce
     float ay = Math.abs(y);
     float xy = x*y; // this is xor of sign of x & y...probably removable.
     float r  = 0;
@@ -136,7 +139,7 @@ public enum Float32 {
 
     // xor the sign of reduced range with the input for final result..
     // again all of this could probably be cleaned up with some thought.
-    return mulsign(r, xy);
+    return mulSign(r, xy);
   }
 
   /**
@@ -165,9 +168,36 @@ public enum Float32 {
     /** atan of x on [-Inf, Inf] */
     public static final float atan(float x)
     {
+      //int ix = Float.floatToRawIntBits(x);
+      //int ax = 0x7fffffff & ix;
+      //int sz = B_ONE | (ix^ax); // 64-bit maybe - mask ix instead
+      //x = Float.intBitsToFloat(ax);
+      //x = atap(x);
+      //x *= sx;
+
+      // TODO: change to local and unfold
       float r = atanp(Math.abs(x));
 
-      return Math.copySign(r, x);
+      return Math.copySign(r, x); // TODO:
+    }
+
+    /**
+     * <p>
+     * NEVER CALL ME
+     */
+    public static final float asin(float a)
+    {
+      // range reduction
+      int   ia = Float.floatToRawIntBits(a);
+      int   aa = (0x7fffffff & ia);            // |a|
+      int   sa = (0x80000000 & ia) | B_ONE;    // a < 0 ? -1 : 1
+      float d  = Float.intBitsToFloat(aa);     // |a|
+      float m  = Float.intBitsToFloat(sa);     // {-1,1}
+
+      // atan(+,+);
+      d = (float)Math.atan2(d, Math.sqrt((1.f+d)*(1.f-d)));
+
+      return m*d;
     }
 
     // NOTE: simply comment out higher order terms
@@ -249,8 +279,6 @@ public enum Float32 {
       return 0.5f + e + a;
     }
 
-
-
     /**
      * Calculates: e<sup>x</sup>
      * <p>
@@ -297,8 +325,6 @@ public enum Float32 {
       } while(true);
     }
 
-
-
     /**
      * Calculates: Log x
      */
@@ -306,8 +332,6 @@ public enum Float32 {
     {
       return log2(x) * LOG_2;
     }
-
-
 
     /**
      * Calculates: Log<sub>10</sub> x
@@ -350,10 +374,24 @@ public enum Float32 {
       return 0x1.p-30f * (1<<(30+x));
     }
 
+
+    /**
+     * Returns the IEEE complaint bit format, converting any negative zero to zero.
+     * Does not normalized NaNs. Intended for hashing.
+     */
+    public static final int toBits(float x)
+    {
+      return Float.floatToRawIntBits(0.f+x);
+    }
+
+    // Everything below here is very questionable in usefulness
+
     // HotSpot doesn't give access to various SIMD opcode sets
     // rsqrt approximations.
 
-    /** Make an initial guess for 1/sqrt(x) using Chris Lomont's "magic" number */
+    /**
+     * Make an initial guess for 1/sqrt(x) using Chris Lomont's "magic" number
+     */
     public static final float rsqrtGuess(float x)
     {
       int   i = 0x5f375a86 - (Float.floatToRawIntBits(x) >>> 1);
@@ -364,6 +402,7 @@ public enum Float32 {
     /**
      * Approximate <tt>1/sqrt(x)</tt> from initial guess <tt>g</tt> using
      * 1 step of Newton's method.
+     * <p>
      */
     public static final float rsqrt_1(float x, float g)
     {
@@ -373,8 +412,9 @@ public enum Float32 {
     }
 
     /**
-     * Approximate <tt>1/sqrt(x)</tt> from initial guess <tt>g</tt> using
-     * 2 steps of Newton's method.
+     * Performs two Newton's steps.
+     * <p>
+     * @see #rsqrt_1(float, float)
      */
     public static final float rsqrt_2(float x, float g)
     {
@@ -382,28 +422,5 @@ public enum Float32 {
       g  = g*(1.5f-hx*g*g);
       g  = g*(1.5f-hx*g*g);
       return g;
-    }
-
-    /**
-     * Approximate <tt>1/sqrt(x)</tt> from initial guess <tt>g</tt> using
-     * 3 step of Newton's method.
-     */
-    public static final float rsqrt_3(float x, float g)
-    {
-      float hx = x * 0.5f;
-      g  = g*(1.5f-hx*g*g);
-      g  = g*(1.5f-hx*g*g);
-      g  = g*(1.5f-hx*g*g);
-      return g;
-    }
-
-
-    /**
-     * Returns the IEEE complaint bit format, converting any negative zero to zero.
-     * Does not normalized NaNs. Intended for hashing.
-     */
-    public static final int toBits(float x)
-    {
-      return Float.floatToRawIntBits(0.f+x);
     }
 }
