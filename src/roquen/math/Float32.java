@@ -17,6 +17,8 @@ public enum Float32 {
 
   /**
    * Returns abs(a)
+   * <p>
+   * This is a branch-free alternate of {@link java.lang.Math#abs(float)}
    */
   public static final float abs(float a)
   {
@@ -30,7 +32,7 @@ public enum Float32 {
    */
   public static final float mulSign(float a, float b)
   {
-    int sb = Float.floatToRawIntBits(b) & 0x7fffffff;
+    int sb = Float.floatToRawIntBits(b) & 0x80000000;
     int ia = Float.floatToRawIntBits(a) ^ sb;
     return   Float.intBitsToFloat(ia);
   }
@@ -42,7 +44,13 @@ public enum Float32 {
   }
 
   /**
-   * No special casing for NaNs and -0
+   * Returns the smallest of the two inputs without special casing for NaNs and -0
+   * <pre>
+   * min(-0, 0)  = -0
+   * min( 0,-0)  =  0
+   * min(NaN, x) =  x
+   * min(x, NaN) =  NaN
+   * </pre>
    */
   public static final float min(float a, float b)
   {
@@ -53,7 +61,13 @@ public enum Float32 {
    * Returns the smaller of 'a' and 'b'.
    * <p>
    * No special casing -0, only returns NaN if both
-   * inputs are NaN
+   * inputs are NaN.
+   * <pre>
+   * minNum(-0, 0)  = -0
+   * minNum( 0,-0)  =  0
+   * minNum(NaN, x) =  x
+   * minNum(x, NaN) =  x
+   * </pre>
    */
   public static final float minNum(float a, float b)
   {
@@ -63,7 +77,13 @@ public enum Float32 {
   }
 
   /**
-   * No special casing for NaNs and -0
+   * Returns the largest of the two inputs without special casing for NaNs and -0
+   * <pre>
+   * max(-0, 0)  = -0
+   * max( 0,-0)  =  0
+   * max(NaN, x) =  x
+   * max(x, NaN) =  NaN
+   * </pre>
    */
   public static final float max(float a, float b)
   {
@@ -75,6 +95,12 @@ public enum Float32 {
    * <p>
    * No special casing -0, only returns NaN if both
    * inputs are NaN.
+   * <pre>
+   * maxNum(-0, 0)  =  0
+   * maxNum( 0,-0)  = -0
+   * maxNum(NaN, x) =  x
+   * maxNum(x, NaN) =  x
+   * </pre>
    */
   public static final float maxNum(float a, float b)
   {
@@ -185,6 +211,7 @@ public enum Float32 {
      * <p>
      * NEVER CALL ME
      */
+    /*
     public static final float asin(float a)
     {
       // range reduction
@@ -199,6 +226,7 @@ public enum Float32 {
 
       return m*d;
     }
+    */
 
     // NOTE: simply comment out higher order terms
     // in exp2 to use a lower quality/faster approximation

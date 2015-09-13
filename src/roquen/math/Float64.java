@@ -8,7 +8,9 @@ public enum Float64
 
   static final long B_ONE = Double.doubleToRawLongBits(1.f);
 
-  /** Same contract as {@link java.lang.Math#abs(double)}. */
+  /**
+   * This is a branch-free alternate of {@link java.lang.Math#abs(double)}.
+   */
   public static final double abs(double a)
   {
     return Double.longBitsToDouble((Double.doubleToRawLongBits(a)<<1)>>>1);
@@ -27,7 +29,13 @@ public enum Float64
   }
 
   /**
-   * @see Float32#min(float,float)
+   * Returns the smallest of the two inputs without special casing for NaNs and -0
+   * <pre>
+   * min(-0, 0)  = -0
+   * min( 0,-0)  =  0
+   * min(NaN, x) =  x
+   * min(x, NaN) =  NaN
+   * </pre>
    */
   public static final double min(double a, double b)
   {
@@ -35,17 +43,32 @@ public enum Float64
   }
 
   /**
-   * @see Float32#minNum(float,float)
+   * Returns the smaller of 'a' and 'b'.
+   * <p>
+   * No special casing -0, only returns NaN if both
+   * inputs are NaN.
+   * <pre>
+   * minNum(-0, 0)  = -0
+   * minNum( 0,-0)  =  0
+   * minNum(NaN, x) =  x
+   * minNum(x, NaN) =  x
+   * </pre>
    */
   public static final double minNum(double a, double b)
   {
     if (b >= a) return a;     // a <= b and neither are NaN
     if (b == b) return b;     // b isn't NaN
-    return a;
+    return a;                 // both are NaN
   }
 
   /**
-   * @see Float32#max(float,float)
+   * Returns the largest of the two inputs without special casing for NaNs and -0
+   * <pre>
+   * max(-0, 0)  = -0
+   * max( 0,-0)  =  0
+   * max(NaN, x) =  x
+   * max(x, NaN) =  NaN
+   * </pre>
    */
   public static final double max(double a, double b)
   {
@@ -53,7 +76,16 @@ public enum Float64
   }
 
   /**
-   * @see Float32#maxNum(float,float)
+   * Returns the larger of 'a' and 'b'.
+   * <p>
+   * No special casing -0, only returns NaN if both
+   * inputs are NaN.
+   * <pre>
+   * maxNum(-0, 0)  =  0
+   * maxNum( 0,-0)  = -0
+   * maxNum(NaN, x) =  x
+   * maxNum(x, NaN) =  x
+   * </pre>
    */
   public static final double maxNum(double a, double b)
   {
@@ -66,6 +98,7 @@ public enum Float64
    * <p>
    * NEVER CALL ME
    */
+  /*
   public static final double asin(double a)
   {
     // range reduction
@@ -80,6 +113,7 @@ public enum Float64
 
     return m*d;
   }
+  */
 
   // HotSpot doesn't give access to various SIMD opcode sets
   // rsqrt approximations.

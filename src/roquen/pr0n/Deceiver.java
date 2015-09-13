@@ -4,7 +4,7 @@ package roquen.pr0n;
  * Template class for lying to the JVM about the type of an
  * array.  Cannot be directly loaded, {@link Dissembler} must
  * loaded first.  It works converting the casting check into
- * nops and loading the class via 
+ * nops and loading the class via
  * {@link sun.misc.Unsafe#defineClass(String, byte[], int, int, ClassLoader, java.security.ProtectionDomain) Unsafe.defineClass}
  * to bypass the verifier.
  * <p>
@@ -16,17 +16,18 @@ package roquen.pr0n;
 
 // On HotSpot this could extend sun.reflect.MagicAccessorImpl
 // which is a backend class to avoid verification.
+@SuppressWarnings("restriction")
 public enum Deceiver
 {
   ;
-  
+
   static {
     // Fail straight away if not loaded properly.
     ClassLoader loader = Deceiver.class.getClassLoader();
     if (loader != null)
       throw new Error("Dissembler must be loaded by Deceiver");
   }
-  
+
   public static byte[]  asB(Object obj) {  return (byte[])obj; }
   public static int[]   asI(Object obj) {  return (int[])obj; }
   public static float[] asF(Object obj) {  return (float[])obj; }
